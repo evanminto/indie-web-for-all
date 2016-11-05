@@ -1,0 +1,25 @@
+{
+  "name": "indie-web-for-all",
+  "version": "0.0.1",
+  "description": "A service providing an IndieWeb profile for users without the technical knowledge to maintain their own site.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evanminto/indie-web-for-all.git"
+  },
+  "keywords": [
+    "indieweb"
+  ],
+  "author": "Evan Minto (vamptvo@gmail.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/evanminto/indie-web-for-all/issues"
+  },
+  "homepage": "https://github.com/evanminto/indie-web-for-all#readme",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
