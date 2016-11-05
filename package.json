@@ -4,7 +4,7 @@
   "description": "A service providing an IndieWeb profile for users without the technical knowledge to maintain their own site.",
   "main": "index.js",
   "engines": {
-    "node": "6.9.1",
+    "node": "6.9.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
