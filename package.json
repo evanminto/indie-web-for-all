@@ -10,10 +10,10 @@
     "start": "npm run start:prod",
     "start:dev": "npm run build:client:dev && npm run build:server:dev && node app/server/index.js",
     "start:prod": "npm run build:client:prod && npm run build:server:prod && node app/server/index.js",
-    "build:server:dev": "browserify src/server-entry.js -t [ envify --NODE_ENV development ] -t [ stringify --extensions [.html] ] -t babelify -t vueify --node > app/server/index.js",
-    "build:server:prod": "browserify src/server-entry.js -t [ envify --NODE_ENV production ] -t [ stringify --extensions [.html] ] -t babelify -t vueify --node > app/server/index.js",
-    "build:client:dev": "browserify src/client-entry.js -t [ envify --NODE_ENV development ] -t babelify -t vueify > app/client/index.js",
-    "build:client:prod": "browserify src/client-entry.js -t [ envify --NODE_ENV production ] -t babelify -t vueify > app/client/index.js"
+    "build:server:dev": "mkdir -p app/server && browserify src/server-entry.js -t [ envify --NODE_ENV development ] -t [ stringify --extensions [.html] ] -t babelify -t vueify --node > app/server/index.js",
+    "build:server:prod": "mkdir -p app/server && browserify src/server-entry.js -t [ envify --NODE_ENV production ] -t [ stringify --extensions [.html] ] -t babelify -t vueify --node > app/server/index.js",
+    "build:client:dev": "mkdir -p app/client && browserify src/client-entry.js -t [ envify --NODE_ENV development ] -t babelify -t vueify > app/client/index.js",
+    "build:client:prod": "mkdir -p app/client && browserify src/client-entry.js -t [ envify --NODE_ENV production ] -t babelify -t vueify > app/client/index.js"
   },
   "repository": {
     "type": "git",
