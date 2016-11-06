@@ -7,7 +7,13 @@
     "node": "6.9.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run start:prod",
+    "start:dev": "npm run build:client:dev && npm run build:server:dev && node app/server/index.js",
+    "start:prod": "npm run build:client:prod && npm run build:server:prod && node app/server/index.js",
+    "build:server:dev": "browserify src/server-entry.js -t [ envify --NODE_ENV development ] -t [ stringify --extensions [.html] ] -t babelify -t vueify --node > app/server/index.js",
+    "build:server:prod": "browserify src/server-entry.js -t [ envify --NODE_ENV production ] -t [ stringify --extensions [.html] ] -t babelify -t vueify --node > app/server/index.js",
+    "build:client:dev": "browserify src/client-entry.js -t [ envify --NODE_ENV development ] -t babelify -t vueify > app/client/index.js",
+    "build:client:prod": "browserify src/client-entry.js -t [ envify --NODE_ENV production ] -t babelify -t vueify > app/client/index.js"
   },
   "repository": {
     "type": "git",
@@ -25,7 +31,16 @@
   "dependencies": {
     "express": "^4.14.0"
   },
-  "scripts": {
-    "start": "node index.js"
+  "devDependencies": {
+    "babel-core": "^6.18.2",
+    "babel-preset-es2015": "^6.18.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.1.1",
+    "document-ready-promise": "^3.0.1",
+    "envify": "^3.4.1",
+    "stringify": "^5.1.0",
+    "vue": "^2.0.5",
+    "vue-server-renderer": "^2.0.5",
+    "vueify": "^9.2.4"
   }
 }
