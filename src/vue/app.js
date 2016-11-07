@@ -1,5 +1,7 @@
 const Vue = require('vue');
-const LoginFormComponent = require('./LoginForm.vue');
+
+const LoginFormComponent = require('./components/LoginForm.vue');
+const SignupFormComponent = require('./components/SignupForm.vue');
 
 module.exports = new Vue({
   render: function render(createElement) {
@@ -10,10 +12,12 @@ module.exports = new Vue({
       },
       [
         createElement('login-form'),
+        createElement('signup-form'),
       ]
     )
   },
   components: {
     'login-form': LoginFormComponent,
+    'signup-form': SignupFormComponent,
   },
 });

@@ -13,4 +13,10 @@ switch (process.env.NODE_ENV) {
     break;
 }
 
+if (process.env.DB_URL) {
+  config.dbUrl = process.env.DB_URL;
+} else {
+  throw new Error('No DB_URL environment variable set.');
+}
+
 module.exports = config;

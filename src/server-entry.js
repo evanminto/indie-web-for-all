@@ -1,8 +1,9 @@
 const express = require('express');
 const vueServerRenderer = require('vue-server-renderer');
+
 const vm = require('./vue/app');
 const baseTemplate = require('./templates/base.html');
-const config = require('./config');
+const config = require('../config/config');
 
 process.env.VUE_ENV = 'server';
 
