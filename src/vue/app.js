@@ -1,23 +1,15 @@
-const Vue = require('vue');
+import Vue from 'vue';
 
-const LoginFormComponent = require('./components/LoginForm.vue');
-const SignupFormComponent = require('./components/SignupForm.vue');
+import router from './router';
 
-module.exports = new Vue({
+const app = new Vue({
   render: function render(createElement) {
-    return createElement(
-      'div',
-      {
-        attrs: {id: 'app'},
-      },
-      [
-        createElement('login-form'),
-        createElement('signup-form'),
-      ]
-    )
+    return createElement('router-view');
   },
-  components: {
-    'login-form': LoginFormComponent,
-    'signup-form': SignupFormComponent,
-  },
+  router: router,
 });
+
+export default {
+  app,
+  router,
+};

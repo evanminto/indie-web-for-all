@@ -1,5 +1,7 @@
-const domReady = require('document-ready-promise');
+import domReady from 'document-ready-promise';
 
-const vm = require('./vue/app.js');
+import vueApp from './vue/app';
 
-domReady().then(() => vm.$mount('#app'));
+vueApp.router.replace(location.pathname);
+
+domReady().then(() => vueApp.app.$mount('#app'));

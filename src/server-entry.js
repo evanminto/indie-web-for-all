@@ -1,27 +1,36 @@
-const express = require('express');
-const vueServerRenderer = require('vue-server-renderer');
+import express from 'express';
 
-const vm = require('./vue/app');
-const baseTemplate = require('./templates/base.html');
-const config = require('../config/config');
+import baseTemplate from './templates/base.hbs';
+import config from '../config/config';
+import vueApp from './vue/app';
 
 process.env.VUE_ENV = 'server';
 
-const app = express();
-const vueRenderer = vueServerRenderer.createRenderer();
+const expressApp = express();
+const vueRenderer = require('vue-server-renderer').createRenderer();
 
-app.get('/', (request, response) => {
-  vueRenderer.renderToString(vm, (error, vueHtml) => {
+vueApp.router.beforeEach((to, from, next) => {
+  if (from.fullPath) {
+    next(false);
+  }
+});
+
+expressApp.use('/assets', express.static('app/client'));
+
+expressApp.get('*', (request, response) => {
+  vueApp.router.replace(request.path);
+
+  vueRenderer.renderToString(vueApp.app, (error, vueHtml) => {
     if (error) {
       console.log(error);
     }
 
-    const html = baseTemplate.replace('<div id="app"></div>', vueHtml);
+    const html = baseTemplate({
+      app: vueHtml,
+    });
 
     response.send(html);
   });
 });
 
-app.use('/assets', express.static('app/client'));
-
-app.listen(config.port);
+expressApp.listen(config.port);
