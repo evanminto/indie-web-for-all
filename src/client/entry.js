@@ -1,6 +1,6 @@
 import domReady from 'document-ready-promise';
 
-import vueApp from './vue/app';
+import vueApp from '../vue/app';
 
 vueApp.router.replace(location.pathname);
 

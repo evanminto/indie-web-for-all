@@ -1,5 +1,5 @@
-const devConfig = require('../config/development');
-const prodConfig = require('../config/production');
+const devConfig = require('./development');
+const prodConfig = require('./production');
 
 let config;
 

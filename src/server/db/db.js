@@ -1,9 +1,6 @@
-import fs from 'fs';
-import path from 'path';
 import Sequelize from 'sequelize';
 
-import config from '../../config/config';
-import defineUser from './models/User';
+import config from '../../../config/config';
 
 const sequelize = new Sequelize(config.dbUrl);
 
@@ -17,8 +14,6 @@ sequelize
   });
 
 const db = {};
-
-db.User = defineUser(sequelize, Sequelize);
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
