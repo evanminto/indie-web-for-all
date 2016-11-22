@@ -1,0 +1,38 @@
+import passport from 'passport';
+import BearerStrategy from 'passport-http-bearer';
+
+import accessTokenRepository from '../users/accessTokenRepository';
+import errorPublisher from '../publishers/error';
+
+import NotFoundError from '../errors/NotFoundError';
+
+passport.use(new BearerStrategy(
+  function(bearerValue, callback) {
+    accessTokenRepository.getByValue(bearerValue)
+      .then((token) => token.getUser())
+      .then((user) => callback(null, user))
+      .catch((error) => {
+        if (error instanceof NotFoundError) {
+          callback(null, false, errorPublisher.publishBaseError(error));
+
+          return;
+        }
+
+        callback(null, false, error);
+      });
+  }
+));
+
+export default function authenticateWithBearerAuth(request, response, next) {
+  return new Promise((resolve, reject) => {
+    passport.authenticate('bearer', (err, user, info) => {
+      if (err) {
+        reject(err);
+      } else if (user) {
+        resolve(user);
+      } else {
+        reject(info);
+      }
+    })(request, response, next);
+  });
+};
