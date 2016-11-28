@@ -17,6 +17,11 @@ db.ProfileLink = db.sequelize.define(
     name: {
       type: db.Sequelize.STRING,
     },
+
+    rel: {
+      type: db.Sequelize.STRING,
+      default: 'me',
+    }
   },
   { underscored: true }
 );

@@ -1,8 +1,18 @@
 class ProfilePublisher {
   publish(profile) {
-    return {
-      username: profile.username,
-    };
+    return profile.getLinks()
+      .then((links) => {
+        return {
+          username: profile.username,
+          links: links.map((link) => {
+            return {
+              url: link.url,
+              name: link.name,
+              rel: link.rel,
+            };
+          }),
+        };
+      });
   }
 }
 

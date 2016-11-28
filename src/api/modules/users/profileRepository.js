@@ -4,8 +4,6 @@ import Profile from './Profile';
 
 class ProfileRepository {
   getByUserId(id) {
-    let selectedUser;
-
     return db.User.findById(id)
       .then((user) => {
         if (!user) {
@@ -14,22 +12,37 @@ class ProfileRepository {
           });
         }
 
-        return user;
+        console.log(user);
+
+        return user.getProfile({
+          include: [db.ProfileLink],
+        });
       })
-        .then((user) => {
-          selectedUser = user;
+      .then((profile) => {
 
-          return user.getProfile();
-        })
-        .then((profile) => {
-          if (!profile) {
-            profile = db.Profile.build();
-            profile.setUser(selectedUser, { save: false });
-          }
+        console.log(profile);
+        if (!profile) {
+          profile = db.Profile.build();
+          profile.setUser(selectedUser, { save: false });
+        }
 
-          return profile;
-        })
-        .then((profile) => new Profile(profile));
+        return new Profile(profile);
+      });
+  }
+
+  persist(profile) {
+    const model = db.Profile.build({
+      id: profile.id,
+      user_id: profile.user.id,
+      username: profile.username,
+    });
+
+    return model.save()
+      .then(() => {
+        profile.links.forEach((link) => {
+          profileLinkRepository.persist(link);
+        });
+      });
   }
 }
 

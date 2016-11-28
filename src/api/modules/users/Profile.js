@@ -1,12 +1,30 @@
+import db from '../../db';
 import ModelProxy from '../ModelProxy';
+import ProfileLink from './ProfileLink';
 
-class Profile extends ModelProxy {
-  get username() {
-    return this.model.username;
+class Profile {
+  constructor({ id, username = '' }) {
+    this.id = id;
+    this.username = username;
+
+    this.links = [];
   }
 
-  set username(value) {
-    this.model.username = value;
+  /**
+   * @param {String} url
+   * @param {String} name
+   * @param {String} rel
+   */
+  addLink(url, name, rel) {
+    const link = new ProfileLink({
+      url,
+      name,
+      rel,
+    });
+
+    this.links.push(link);
+
+    return link;
   }
 }
 

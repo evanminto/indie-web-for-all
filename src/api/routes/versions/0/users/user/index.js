@@ -1,17 +1,13 @@
 import express from 'express';
 
-import Actions from './actions';
+import { getUser } from './actions';
+import profileRouter from './profile';
 
 const router = express.Router({
   mergeParams: true,
 });
 
-router.get('/', Actions.getUser);
-
-router.route('/profile')
-  .get(Actions.getProfile)
-  .post(Actions.updateProfile)
-  .patch(Actions.updateProfile)
-  .put(Actions.updateProfile);
+router.get('/', getUser);
+router.use('/profile', profileRouter);
 
 export default router;

@@ -1,5 +1,6 @@
 import AccessToken from './AccessToken';
 import ModelProxy from '../ModelProxy';
+import profileRepository from './profileRepository';
 
 class User extends ModelProxy {
   getAccessToken() {

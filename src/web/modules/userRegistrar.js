@@ -13,8 +13,7 @@ class UserRegistrar {
           return response.json();
         }
 
-        return response.json()
-          .then((data) => Promise.reject(data));
+        throw response.json();
       });
   }
 }

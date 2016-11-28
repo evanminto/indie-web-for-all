@@ -1,6 +1,8 @@
-import store from '../vue/store';
+import cookies from 'js-cookies';
+
+import inBrowser from './inBrowser';
 import requestFactory from './api/v0/requestFactory';
-import cookies from './cookies';
+import store from '../vue/store';
 import { SET_CURRENT_USER_CREDS } from '../vue/store/mutationTypes';
 
 class Session {
@@ -37,8 +39,10 @@ class Session {
       accessToken: userAccessToken,
     });
 
-    cookies.setItem('user_id', userId, { secure: true });
-    cookies.setItem('user_access_token', userAccessToken, { secure: true });
+    if (inBrowser) {
+      cookies.setItem('user_id', userId, { secure: true });
+      cookies.setItem('user_access_token', userAccessToken, { secure: true });
+    }
   }
 
   logIn(email, password) {

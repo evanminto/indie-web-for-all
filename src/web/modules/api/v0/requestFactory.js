@@ -1,7 +1,7 @@
 import 'isomorphic-fetch';
-import currentSession from '../../currentSession';
 
-import config from '../../../../../config/client/config';
+import config from '../../../../../config/client';
+import currentSession from '../../currentSession';
 
 class RequestFactory {
   constructor() {

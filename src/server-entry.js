@@ -2,7 +2,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 
 import baseTemplate from './web/templates/base.hbs';
-import config from '../config/config';
+import config from '../config/server';
 import { app as vueApp, router as vueRouter } from './web/vue';
 import currentSession from './web/modules/currentSession';
 import db from './api/db';
@@ -12,9 +12,6 @@ process.env.VUE_ENV = 'server';
 
 const expressApp = express();
 const vueRenderer = require('vue-server-renderer').createRenderer();
-
-global.document = false;
-global.window = false;
 
 expressApp.use(cookieParser());
 

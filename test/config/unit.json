@@ -1,0 +1,10 @@
+{
+  "testRegex": "/test/unit/.*\\.test\\.js$",
+  "testPathIgnorePatterns": [
+    "/node_modules/",
+    "/src/",
+    "/app/",
+    "/config/"
+  ],
+  "testEnvironment": "jsdom"
+}
