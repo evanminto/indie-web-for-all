@@ -3,10 +3,28 @@
     <p>
       <label>
         <span class="label-text">Username</span>
-        <input id="username_field" name="username" v-model="username">
+        <input id="username_field" name="username" :value="username">
         <output for="username_field">{{usernameError}}</output>
       </label>
     </p>
+
+    <fieldset>
+      <legend>Links</legend>
+
+      <ul>
+        <li v-for="(link, index) in links">
+          <label>
+            <span class="label-text">URL</span>
+            <input :id="`link_${index}_url_field`" :name="`links[${index}][url]`" v-model="link.url">
+          </label>
+
+          <label>
+            <span class="label-text">Name</span>
+            <input :id="`link_${index}_name_field`" :name="`links[${index}][name]`" v-model="link.name">
+          </label>
+        </li>
+      </ul>
+    </fieldset>
 
     <button type="submit">Update</button>
   </form>
@@ -14,57 +32,48 @@
 
 <script>
   import requestFactory from '../../modules/api/v0/requestFactory';
+  import currentUserProfile from '../../modules/currentUserProfile';
+
+  const placeholderLink = {
+    url: '',
+    name: '',
+  };
 
   export default {
     data() {
-      return {
-        username: '',
-        usernameError: '',
-      };
+      return {};
+    },
+
+    computed: {
+      username() {
+        return currentUserProfile.getUsername();
+      },
+
+      links() {
+        return currentUserProfile.getLinks();
+      }
     },
 
     mounted() {
-      const request = requestFactory.getProfile();
 
-      fetch(request)
-        .then((response) => {
-          if (response.ok) {
-            return response.json()
-              .then((data) => {
-                this.$data.username = data.username;
-              });
-          }
-
-          return response.json()
-            .then((data) => {
-              console.error(data);
-            })
-        })
-        .catch((error) => {
-          console.error(error);
-        })
     },
 
     methods: {
       updateProfile(event) {
         event.preventDefault();
 
-        const request = requestFactory.updateProfile({
-          username: this.$data.username,
-        });
+        (async () => {
+          const username = null;
+          const links = null;
 
-        fetch(request)
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.errors) {
-              data.errors.forEach((error) => {
-                if (error.field === 'username') {
-                  this.$data.usernameError = error.message;
-                }
-              });
-            }
-          });
+          await currentUserProfile.setUsername(username);
+          await currentUserProfile.setLinks(links);
+        })();
       },
     },
   };
+
+  function getFormDataObject(formEl) {
+
+  }
 </script>

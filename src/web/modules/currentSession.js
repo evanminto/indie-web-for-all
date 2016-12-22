@@ -45,26 +45,24 @@ class Session {
     }
   }
 
-  logIn(email, password) {
+  async logIn(email, password) {
     const request = requestFactory.getUserAccessToken({
       email,
       password,
     });
 
-    return fetch(request)
-      .then((response) => {
-        if (response.ok) {
-          return response.json()
-            .then((data) => {
-              this.useCredentials(data.userId, data.token);
+    const response = await fetch(request)
 
-              return data;
-            });
-        }
+    if (response.ok) {
+      const data = await response.json();
 
-        return response.json()
-          .then((data) => Promise.reject(data));
-      });
+      this.useCredentials(data.userId, data.token);
+      currentUserProfile.initialize();
+    }
+
+    const data = response.json();
+
+    return Promise.reject(data);
   }
 }
 

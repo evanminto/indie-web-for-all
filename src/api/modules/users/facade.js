@@ -28,6 +28,11 @@ class Facade {
           });
         })
         .then(() => {
+          return newUser.createProfile({}, {
+            transaction: t,
+          });
+        })
+        .then(() => {
           return newUser.createAccessToken({
             value: 'asdf',
           }, {

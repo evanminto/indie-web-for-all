@@ -1,73 +1,76 @@
 import HttpStatuses from 'http-status-codes';
 
 import db from '../../../../../../../db';
+import ApiError from '../../../../../../../modules/errors/ApiError';
 import NotFoundError from '../../../../../../../modules/errors/NotFoundError';
 
-export function getLinks(request, response) {
-  db.Profile.findOne({
-    where: {
-      user_id: request.params.id,
-    },
-    include: [db.ProfileLink],
-  })
-    .then((profile) => {
-      response.json(profile.links);
-    });
+export async function getLinks(request, response) {
+  try {
+    const user = await db.User.findById(request.params.id);
+
+    let profile;
+
+    if (user) {
+      profile = await user.getProfile();
+    } else {
+      throw new NotFoundError('User not found.');
+    }
+
+    if (!profile) {
+      throw new NotFoundError('Profile not found.');
+    }
+
+    const links = await profile.getLinks();
+
+    response.json(links);
+  } catch (error) {
+    let apiError;
+
+    if (error instanceof NotFoundError) {
+      apiError = new ApiError(HttpStatuses.NOT_FOUND, error.message);
+    } else {
+      apiError = new ApiError(HttpStatuses.INTERNAL_SERVER_ERROR, error);
+    }
+
+    response.status(apiError.statusCode)
+      .json(apiError.json);
+  }
 }
 
 export function addLink(request, response) {
-  let currentUser;
-  let currentProfile;
-  let newLink;
+  db.sequelize.transaction(async (t) => {
+    const user = await db.User.findById(request.params.id);
 
-  db.sequelize.transaction((t) => {
-    return db.User.findById(request.params.id)
-      .then((user) => {
-        if (user) {
-          currentUser = user;
-          return user.getProfile();
-        } else {
-          throw new NotFoundError('User not found.');
-        }
-      })
-      .then((profile) => {
-        if (profile) {
-          return profile;
-        } else {
-          return currentUser.createProfile({}, {
-            transaction: t,
-          });
-        }
-      })
-      .then((profile) => {
-        currentProfile = profile;
+    let profile;
 
-        return profile;
-      })
-      .then(() => {
-        return db.ProfileLink.create({
-          url: request.body.url,
-          name: request.body.name,
-          rel: request.body.rel,
-        }, {
-          transaction: t,
-        });
-      })
-      .then((link) => {
-        newLink = link;
+    if (user) {
+      profile = await user.getProfile();
+    } else {
+      throw new NotFoundError('User not found.');
+    }
 
-        return currentProfile.addLink(link, {
-          transaction: t,
-        });
-      })
-      .then(() => {
-        response.json({
-          id: newLink.id,
-          url: newLink.url,
-          name: newLink.name,
-          rel: newLink.rel,
-        });
-      });
+    if (!profile) {
+      throw new NotFoundError('Profile not found.');
+    }
+
+    const link = await db.ProfileLink.create({
+      url: request.body.url,
+      name: request.body.name,
+      rel: request.body.rel,
+    }, {
+      transaction: t,
+    });
+
+    await profile.addLink(link, {
+      transaction: t,
+    });
+
+    response.json({
+      id: link.id,
+      url: link.url,
+      name: link.name,
+      rel: link.rel,
+    });
   });
 }
 

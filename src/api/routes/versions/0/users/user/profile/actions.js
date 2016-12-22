@@ -15,21 +15,24 @@ import accessTokenAuth from '../../../../../../modules/authentication/accessToke
  * @param  {Request} request
  * @param  {Response} response
  */
-export function getProfile(request, response) {
-  profileRepository.getByUserId(request.params.id)
-    .then((profile) => profilePublisher.publish(profile))
-    .then((publishedProfile) => response.json(publishedProfile))
-    .catch((error) => {
-      if (error instanceof NotFoundError) {
-        throw new ApiError(HttpStatuses.NOT_FOUND, 'Profile not found.');
-      }
+export async function getProfile(request, response) {
+  try {
+    const profile = await profileRepository.getByUserId(request.params.id);
+    const publishedProfile = profilePublisher.publish(profile);
 
-      throw new ApiError(HttpStatuses.INTERNAL_SERVER_ERROR, error.message);
-    })
-    .catch((error) => {
-      response.status(error.statusCode)
-        .json(error.json);
-    });
+    response.json(publishedProfile);
+  } catch (error) {
+    let apiError;
+
+    if (error instanceof NotFoundError) {
+      apiError = new ApiError(HttpStatuses.NOT_FOUND, 'Profile not found.');
+    }
+
+    apiError = new ApiError(HttpStatuses.INTERNAL_SERVER_ERROR, error.message);
+
+    response.status(apiError.statusCode)
+      .json(apiError.json);
+  }
 }
 
 /**

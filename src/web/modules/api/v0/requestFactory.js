@@ -58,6 +58,12 @@ class RequestFactory {
     });
   }
 
+  getProfileLinks() {
+    return new Request(this.generateUrl(`/api/v0/users/${currentSession.userId}/profile/links`), {
+      method: 'GET',
+    });
+  }
+
   updateProfile(data) {
     let body;
 
@@ -74,7 +80,7 @@ class RequestFactory {
     }
 
     return new Request(this.generateUrl(`/api/v0/users/${currentSession.userId}/profile`), {
-      method: 'POST',
+      method: 'PATCH',
       body: body,
       headers: {
         'Authorization': `Bearer ${currentSession.userAccessToken}`,

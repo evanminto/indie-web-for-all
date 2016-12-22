@@ -3,31 +3,23 @@ import NotFoundError from '../errors/NotFoundError';
 import Profile from './Profile';
 
 class ProfileRepository {
-  getByUserId(id) {
-    return db.User.findById(id)
-      .then((user) => {
-        if (!user) {
-          throw new NotFoundError({
-            message: 'No user found.',
-          });
-        }
+  async getByUserId(id) {
+    const user = await db.User.findById(id);
 
-        console.log(user);
-
-        return user.getProfile({
-          include: [db.ProfileLink],
-        });
-      })
-      .then((profile) => {
-
-        console.log(profile);
-        if (!profile) {
-          profile = db.Profile.build();
-          profile.setUser(selectedUser, { save: false });
-        }
-
-        return new Profile(profile);
+    if (!user) {
+      throw new NotFoundError({
+        message: 'No user found.',
       });
+    }
+
+    let profile = await user.getProfile();
+
+    if (!profile) {
+      profile = await db.Profile.build();
+      await profile.setUser(user, { save: false });
+    }
+
+    return new Profile(profile);
   }
 
   persist(profile) {

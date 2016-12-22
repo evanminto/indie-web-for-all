@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 
@@ -26,7 +27,8 @@ expressApp.get('/*', (request, response) => {
     currentSession.useCredentials(request.cookies.user_id, request.cookies.user_access_token);
   }
 
-  vueRouter.replace(request.path);
+  // Causing a problem now?
+  // vueRouter.replace(request.path);
 
   vueRenderer.renderToString(vueApp, (error, vueHtml) => {
     if (error) {
@@ -37,12 +39,15 @@ expressApp.get('/*', (request, response) => {
       app: vueHtml,
     });
 
-    response.send(html);
+    response
+      .set('Content-Type', 'text/html')
+      .send(html);
   });
 });
 
-db.sequelize.sync({ force: true })
-  .then(() => {
-    expressApp.listen(config.port);
-    console.log('Server running...');
-  });
+(async () => {
+  await db.sequelize.sync({ force: false });
+  expressApp.listen(config.port);
+
+  console.log('Server running...');
+})();
