@@ -2,7 +2,13 @@ import Sequelize from 'sequelize';
 
 import config from '../../../config/server';
 
-const sequelize = new Sequelize(config.dbUrl);
+const sequelizeConfig = {};
+
+if (process.env.NODE_ENV === 'test') {
+  sequelizeConfig.logging = false;
+}
+
+const sequelize = new Sequelize(config.dbUrl, sequelizeConfig);
 
 sequelize
   .authenticate()

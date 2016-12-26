@@ -1,5 +1,9 @@
 import db from '../db';
 
+/**
+ * Private account information for a @{User}.
+ * @type {[type]}
+ */
 db.UserAccount = db.sequelize.define(
   'user_account',
   {

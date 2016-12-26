@@ -1,4 +1,4 @@
-import { LOGIN_SET_EMAIL, LOGIN_SET_PASSWORD } from '../mutationTypes';
+import { SIGNUP_SET_EMAIL, SIGNUP_SET_PASSWORD } from '../mutationTypes';
 
 export default {
   state: {
@@ -7,11 +7,11 @@ export default {
   },
 
   mutations: {
-    [LOGIN_SET_EMAIL](state, email) {
+    [SIGNUP_SET_EMAIL](state, email) {
       state.email = email;
     },
 
-    [LOGIN_SET_PASSWORD](state, password) {
+    [SIGNUP_SET_PASSWORD](state, password) {
       state.password = password;
     },
   },

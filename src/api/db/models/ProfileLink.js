@@ -1,5 +1,8 @@
 import db from '../db';
 
+/**
+ * Links to other pages representing or related to the user.
+ */
 db.ProfileLink = db.sequelize.define(
   'profile_link',
   {

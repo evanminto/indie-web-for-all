@@ -46,8 +46,10 @@ expressApp.get('/*', (request, response) => {
 });
 
 (async () => {
-  await db.sequelize.sync({ force: false });
+  await db.sequelize.sync({ force: true });
   expressApp.listen(config.port);
 
-  console.log('Server running...');
+  if (process.env.NODE_ENV !== 'test') {
+    console.log('Server running...');
+  }
 })();

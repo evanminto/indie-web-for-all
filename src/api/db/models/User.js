@@ -1,5 +1,8 @@
 import db from '../db';
 
+/**
+ * A user of the service.
+ */
 db.User = db.sequelize.define(
   'user',
   {

@@ -1,6 +1,9 @@
 import db from '../db';
 import passwordEncoder from '../../modules/users/passwordEncoder';
 
+/**
+ * Login credentials for a @{User}.
+ */
 db.UserCredentials = db.sequelize.define(
   'user_credentials',
   {

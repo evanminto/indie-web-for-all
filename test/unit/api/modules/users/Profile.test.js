@@ -32,35 +32,4 @@ describe('Profile', () => {
       expect(profile.username).toEqual(expected);
     });
   });
-
-  describe('getLinks()', () => {
-    it('resolves to an array of ProfileLink instances', () => {
-      const expectedValue = [
-        {
-          a: 1,
-          b: 2,
-        },
-        {
-          c: 3,
-          d: 4,
-        }
-      ];
-
-      const profile = new Profile({
-        getLinks() {
-          return Promise.resolve(expectedValue);
-        },
-      });
-
-      return profile.getLinks()
-        .then((links) => {
-          expect(links.length).toEqual(2);
-
-          links.forEach((link, index) => {
-            expect(link).toBeInstanceOf(ProfileLink);
-            expect(ProfileLink).toBeCalledWith(expectedValue[index]);
-          });
-        });
-    });
-  });
 });

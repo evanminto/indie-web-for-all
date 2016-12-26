@@ -3,22 +3,18 @@ import NotFoundError from '../errors/NotFoundError';
 import AccessToken from './AccessToken';
 
 class AccessTokenRepository {
-  getByValue(value) {
-    return db.UserAccessToken.findOne({
+  async getByValue(value) {
+    const token = await db.UserAccessToken.findOne({
       where: {
         value: value,
       },
-    })
-      .then((token) => {
-        if (!token) {
-          throw new NotFoundError({
-            message: 'Token not found.',
-          });
-        }
+    });
 
-        return token;
-      })
-        .then((token) => new AccessToken(token));
+    if (!token) {
+      throw new NotFoundError('Token not found.');
+    }
+
+    return new AccessToken(token);
   }
 }
 

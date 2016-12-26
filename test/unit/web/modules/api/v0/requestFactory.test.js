@@ -1,4 +1,4 @@
-import config from '../../../../../../config/client/config';
+import config from '../../../../../../config/client';
 
 jest.mock('../../../../../../src/web/modules/currentSession', () => {
   return {
@@ -107,6 +107,27 @@ describe('API v0 Request Factory', () => {
 
       it('sets a URL', () => {
         expect(request.url).toEqual(`${config.baseUrl}/api/v0/users/1234/profile`);
+      });
+
+      it('sets PATCH as method', () => {
+        expect(request.method).toEqual('PATCH');
+      });
+
+      it('sets the FormData as body', () => {
+        expect(request.body).toEqual(data);
+      });
+    });
+  });
+
+  describe('addProfileLink()', () => {
+    describe('when passed FormData', () => {
+      const data = new FormData();
+      data.append('foo', 'bar');
+
+      const request = apiRequestFactory.addProfileLink(data);
+
+      it('sets a URL', () => {
+        expect(request.url).toEqual(`${config.baseUrl}/api/v0/users/1234/profile/links`);
       });
 
       it('sets POST as method', () => {

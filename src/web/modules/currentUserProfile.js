@@ -15,7 +15,7 @@ class Profile {
 
         if (profileResponse.ok) {
           const data = await profileResponse.json();
-          store.commit(CHANGE_USERNAME, data.username);
+          this.setUsername(data.username);
         } else {
           const data = await profileResponse.json();
           console.error(data);
@@ -25,7 +25,7 @@ class Profile {
 
         if (linksResponse.ok) {
           const links = await linksResponse.json();
-          store.commit(SET_USER_PROFILE_LINKS, links);
+          this.setLinks(links);
         } else {
           const data = await linksResponse.json();
           console.error(data);
@@ -45,16 +45,46 @@ class Profile {
     store.commit(CHANGE_USERNAME, newValue);
   }
 
-  setUsername(newValue) {
-    store.commit(CHANGE_USERNAME, newValue);
-  }
-
   getLinks() {
     return store.state.currentUserProfile.links;
   }
 
   setLinks(links) {
     store.commit(SET_USER_PROFILE_LINKS, links);
+  }
+
+  async save() {
+    const updateRequest = requestFactory.updateProfile({
+      username: this.getUsername() ? this.getUsername() : '',
+    });
+
+    const linkRequests = [];
+
+    this.getLinks().forEach((link) => {
+      if (!link.id) {
+        linkRequests.push(requestFactory.addProfileLink({
+          name: link.name,
+          url: link.url,
+        }));
+      }
+    });
+
+    const responses = await Promise.all(
+      [ fetch(updateRequest) ]
+        .concat(
+          linkRequests.map((request) => {
+            return fetch(request);
+          })
+        )
+    );
+
+    for (let response of responses) {
+      if (!response.ok) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }
 

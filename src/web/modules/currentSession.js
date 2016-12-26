@@ -57,10 +57,11 @@ class Session {
       const data = await response.json();
 
       this.useCredentials(data.userId, data.token);
-      currentUserProfile.initialize();
+
+      return;
     }
 
-    const data = response.json();
+    const data = await response.json();
 
     return Promise.reject(data);
   }

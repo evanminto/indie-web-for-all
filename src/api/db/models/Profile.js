@@ -1,5 +1,8 @@
 import db from '../db';
 
+/**
+ * Public-facing @{User} data.
+ */
 db.Profile = db.sequelize.define(
   'profile',
   {

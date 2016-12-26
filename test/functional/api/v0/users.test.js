@@ -1,4 +1,6 @@
 import request from 'request';
+import HttpStatuses from 'http-status-codes';
+
 import start from '../../../server';
 
 describe('API v0', () => {
@@ -78,6 +80,25 @@ describe('API v0', () => {
               });
             });
         });
+    });
+  });
+
+  describe('GET /users/access_tokens with invalid token', () => {
+    it('returns an Unauthorized response', async () => {
+      const server = await start(true);
+
+      await new Promise((resolve) => {
+        request({
+          url: 'http://localhost:3000/api/v0/users/access_tokens?token=asdfasdf&user_id=1234',
+        }, (error, response, body) => {
+          expect(error).toBeFalsy();
+          expect(response.statusCode).toEqual(HttpStatuses.NOT_FOUND);
+
+          resolve();
+        });
+      });
+
+      server.close();
     });
   });
 });

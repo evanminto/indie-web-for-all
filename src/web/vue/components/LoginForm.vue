@@ -1,12 +1,14 @@
 <template>
   <form @submit="logIn">
-    <input type="email" name="email" required v-model="email">
-    <input type="password" name="password" required v-model="password">
+    <input type="email" name="email" required @input="updateEmail">
+    <input type="password" name="password" required @input="updatePassword">
     <button type="submit" v-bind:disabled="!valid">Log In</button>
   </form>
 </template>
 
 <script>
+  import store from '../store';
+  import { LOGIN_SET_EMAIL, LOGIN_SET_PASSWORD } from '../store/mutationTypes';
   import currentSession from '../../modules/currentSession';
   import userRegistrar from '../../modules/userRegistrar';
   import { SETTINGS } from '../router/routes';
@@ -14,31 +16,48 @@
   export default {
     data() {
       return {
-        email: '',
-        password: '',
         valid: false,
       };
     },
 
-    mounted() {
-      this.checkValidity();
+    computed: {
+      email() {
+        return store.state.loginForm.email;
+      },
+
+      password() {
+        return store.state.loginForm.password;
+      },
     },
 
-    updated() {
-      this.checkValidity();
+    mounted() {
+      this.$data.valid = this.$el.checkValidity();
     },
 
     methods: {
-      checkValidity() {
-        this.valid = this.$el.checkValidity();
+      updateEmail(event) {
+        store.commit(LOGIN_SET_EMAIL, event.target.value);
+        this.$data.valid = this.$el.checkValidity();
       },
 
-      logIn(event) {
+      updatePassword(event) {
+        store.commit(LOGIN_SET_PASSWORD, event.target.value);
+        this.$data.valid = this.$el.checkValidity();
+      },
+
+      async logIn(event) {
         event.preventDefault();
 
-        currentSession.logIn(this.$data.email, this.$data.password)
-          .then(() => this.$router.push(SETTINGS))
-          .catch((data) => console.error('Failed to get log in:', data.message));
+        try {
+          await currentSession.logIn(
+            store.state.loginForm.email,
+            store.state.loginForm.password
+          );
+
+          this.$router.push(SETTINGS);
+        } catch (error) {
+          console.error('Failed to log in:', data);
+        }
       }
     },
   };

@@ -88,6 +88,30 @@ class RequestFactory {
     });
   }
 
+  addProfileLink(data) {
+    let body;
+
+    if (data instanceof FormData) {
+      body = data;
+    } else {
+      body = new FormData();
+
+      for (let prop in data) {
+        if (data.hasOwnProperty(prop)) {
+          body.append(prop, data[prop]);
+        }
+      }
+    }
+
+    return new Request(this.generateUrl(`/api/v0/users/${currentSession.userId}/profile/links`), {
+      method: 'POST',
+      body: body,
+      headers: {
+        'Authorization': `Bearer ${currentSession.userAccessToken}`,
+      }
+    });
+  }
+
   generateUrl(path) {
     return this.baseUrl + path;
   }
