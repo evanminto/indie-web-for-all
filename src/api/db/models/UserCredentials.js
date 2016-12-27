@@ -1,6 +1,13 @@
 import db from '../db';
 import passwordEncoder from '../../modules/users/passwordEncoder';
 
+/**
+ * Login credentials for a {@link User}.
+ *
+ * @member UserCredentials
+ * @memberof db
+ * @type {external:Model}
+ */
 db.UserCredentials = db.sequelize.define(
   'user_credentials',
   {

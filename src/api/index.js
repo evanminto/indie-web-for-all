@@ -1,3 +1,13 @@
+/**
+ * @external Request
+ * @see http://expressjs.com/en/api.html#req
+ */
+
+/**
+ * @external Response
+ * @see http://expressjs.com/en/api.html#res
+ */
+
 import express from 'express';
 import bodyParser from 'body-parser';
 import multer from 'multer';
@@ -14,6 +24,7 @@ router.use(bodyParser.urlencoded({ extended: true }));
 
 router.use('/v0', v0);
 
+// Return 404 response when the API doesn't recognize a route.
 router.all('/*', (request, response) => {
   response.status(404);
   response.json({

@@ -36,6 +36,15 @@ passport.use(new BasicStrategy(
   }
 ));
 
+/**
+ * Checks username and password.
+ *
+ * @function authentication/basic
+ * @param  {external:Request}    request
+ * @param  {external:Response}   response
+ * @param  {Function}            next
+ * @return {Promise.<User, String>}
+ */
 export default function authenticateWithBasicAuth(request, response, next) {
   return new Promise((resolve, reject) => {
     passport.authenticate('basic', (err, user, info) => {

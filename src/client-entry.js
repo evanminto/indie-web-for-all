@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import domReady from 'document-ready-promise';
 
 import { app, router } from './web/vue';

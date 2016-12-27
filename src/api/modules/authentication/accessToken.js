@@ -23,6 +23,15 @@ passport.use(new BearerStrategy(
   }
 ));
 
+/**
+ * Checks that Bearer token is set to a valid access token.
+ *
+ * @function authentication/accessToken
+ * @param  {external:Request}    request
+ * @param  {external:Response}   response
+ * @param  {Function}            next
+ * @return {Promise.<User, String>}
+ */
 export default function authenticateWithBearerAuth(request, response, next) {
   return new Promise((resolve, reject) => {
     passport.authenticate('bearer', (err, user, info) => {

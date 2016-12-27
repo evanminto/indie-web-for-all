@@ -3,10 +3,52 @@
     <p>
       <label>
         <span class="label-text">Username</span>
-        <input id="username_field" name="username" v-model="username">
+
+        <input
+          id="username_field"
+          name="username"
+          :value="username"
+          @input="updateUsername"
+        >
+
         <output for="username_field">{{usernameError}}</output>
       </label>
     </p>
+
+    <fieldset>
+      <legend>Links</legend>
+
+      <ul>
+        <li v-for="(link, index) in links">
+          <fieldset name="links[]" @input="updateLink">
+            <label>
+              <span class="label-text">URL</span>
+              <input
+                :id="`link_${index}_url_field`"
+                :disabled="link.id"
+                name="url"
+                type="url"
+                :value="link.url"
+                :data-id="link.id"
+                :data-index="index"
+              >
+            </label>
+
+            <label>
+              <span class="label-text">Name</span>
+              <input
+                :id="`link_${index}_name_field`"
+                :disabled="link.id"
+                name="name"
+                :value="link.name"
+                :data-id="link.id"
+                :data-index="index"
+              >
+            </label>
+          </fieldset>
+        </li>
+      </ul>
+    </fieldset>
 
     <button type="submit">Update</button>
   </form>
@@ -14,56 +56,65 @@
 
 <script>
   import requestFactory from '../../modules/api/v0/requestFactory';
+  import currentUserProfile from '../../modules/currentUserProfile';
+
+  const placeholderLink = {
+    url: '',
+    name: '',
+  };
 
   export default {
     data() {
       return {
-        username: '',
         usernameError: '',
       };
     },
 
-    mounted() {
-      const request = requestFactory.getProfile();
+    computed: {
+      username: () => currentUserProfile.getUsername(),
 
-      fetch(request)
-        .then((response) => {
-          if (response.ok) {
-            return response.json()
-              .then((data) => {
-                this.$data.username = data.username;
-              });
-          }
+      links() {
+        return currentUserProfile.getLinks().concat([{
+          rel: 'me',
+        }]);
+      },
+    },
 
-          return response.json()
-            .then((data) => {
-              console.error(data);
-            })
-        })
-        .catch((error) => {
-          console.error(error);
-        })
+    async mounted() {
+      await currentUserProfile.initialize();
     },
 
     methods: {
-      updateProfile(event) {
+      updateLink(event) {
+        const input = event.target;
+        const index = parseInt(input.dataset.index, 10);
+        const links = currentUserProfile.getLinks();
+
+        if (!links[index]) {
+          links.push({});
+        }
+
+        switch (input.name) {
+          case 'name':
+            links[index].name = input.value;
+            break;
+          case 'url':
+            links[index].url = input.value;
+            break;
+        }
+
+        currentUserProfile.setLinks(links);
+      },
+
+      updateUsername(event) {
+        currentUserProfile.setUsername(event.target.value);
+      },
+
+      async updateProfile(event) {
         event.preventDefault();
 
-        const request = requestFactory.updateProfile({
-          username: this.$data.username,
-        });
-
-        fetch(request)
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.errors) {
-              data.errors.forEach((error) => {
-                if (error.field === 'username') {
-                  this.$data.usernameError = error.message;
-                }
-              });
-            }
-          });
+        await currentUserProfile.save();
+        await currentUserProfile.initialize();
       },
     },
   };

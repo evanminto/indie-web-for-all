@@ -4,6 +4,10 @@ jest.mock('../../../../../src/api/modules/users/User', () => {
   };
 });
 
+const ProfileLink = jest.fn();
+
+jest.mock('../../../../../src/api/modules/users/ProfileLink', () => ProfileLink);
+
 const Profile = require('../../../../../src/api/modules/users/Profile').default;
 
 describe('Profile', () => {

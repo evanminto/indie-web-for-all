@@ -1,8 +1,9 @@
+import 'babel-polyfill';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 
 import baseTemplate from './web/templates/base.hbs';
-import config from '../config/config';
+import config from '../config/server';
 import { app as vueApp, router as vueRouter } from './web/vue';
 import currentSession from './web/modules/currentSession';
 import db from './api/db';
@@ -12,9 +13,6 @@ process.env.VUE_ENV = 'server';
 
 const expressApp = express();
 const vueRenderer = require('vue-server-renderer').createRenderer();
-
-global.document = false;
-global.window = false;
 
 expressApp.use(cookieParser());
 
@@ -29,7 +27,8 @@ expressApp.get('/*', (request, response) => {
     currentSession.useCredentials(request.cookies.user_id, request.cookies.user_access_token);
   }
 
-  vueRouter.replace(request.path);
+  // Causing a problem now?
+  // vueRouter.replace(request.path);
 
   vueRenderer.renderToString(vueApp, (error, vueHtml) => {
     if (error) {
@@ -40,12 +39,17 @@ expressApp.get('/*', (request, response) => {
       app: vueHtml,
     });
 
-    response.send(html);
+    response
+      .set('Content-Type', 'text/html')
+      .send(html);
   });
 });
 
-db.sequelize.sync({ force: true })
-  .then(() => {
-    expressApp.listen(config.port);
+(async () => {
+  await db.sequelize.sync({ force: true });
+  expressApp.listen(config.port);
+
+  if (process.env.NODE_ENV !== 'test') {
     console.log('Server running...');
-  });
+  }
+})();

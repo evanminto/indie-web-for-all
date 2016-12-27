@@ -1,5 +1,12 @@
 import db from '../db';
 
+/**
+ * Links to other pages representing or related to the user.
+ *
+ * @member ProfileLink
+ * @memberof db
+ * @type {external:Model}
+ */
 db.ProfileLink = db.sequelize.define(
   'profile_link',
   {
@@ -17,6 +24,11 @@ db.ProfileLink = db.sequelize.define(
     name: {
       type: db.Sequelize.STRING,
     },
+
+    rel: {
+      type: db.Sequelize.STRING,
+      default: 'me',
+    }
   },
   { underscored: true }
 );

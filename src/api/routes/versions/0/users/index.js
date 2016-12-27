@@ -4,6 +4,7 @@ import HttpStatuses from 'http-status-codes';
 import db from '../../../../db';
 import userRouter from './user';
 import ApiError from '../../../../modules/errors/ApiError';
+import BaseError from '../../../../modules/errors/BaseError';
 import NotFoundError from '../../../../modules/errors/NotFoundError';
 import apiErrorFactory from '../../../../modules/errors/factories/apiErrorFactory';
 import userPublisher from '../../../../modules/publishers/user';
@@ -23,15 +24,18 @@ router.post('/', (request, response) => {
     .then((user) => userPublisher.publish(user, { accessToken: true }))
     .then((publishedUser) => response.status(HttpStatuses.CREATED).json(publishedUser))
     .catch((error) => {
+      let apiError;
+
       if (error instanceof db.Sequelize.Error) {
         throw apiErrorFactory.createFromSequelizeError(error);
+      } else if (error instanceof BaseError) {
+        apiError = apiErrorFactory.createFromBaseError(error);
       } else {
-        throw new ApiError(HttpStatuses.INTERNAL_SERVER_ERROR, error.message);
+        apiError = apiErrorFactory.createFromMessage(error);
       }
-    })
-    .catch((error) => {
-      response.status(error.statusCode)
-        .json(error.json);
+
+      response.status(apiError.statusCode)
+        .json(apiError.json);
     });
 });
 

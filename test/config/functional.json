@@ -1,0 +1,10 @@
+{
+  "testRegex": "/test/functional/.*\\.test\\.js$",
+  "testPathIgnorePatterns": [
+    "/node_modules/",
+    "/src/",
+    "/app/",
+    "/config/"
+  ],
+  "testEnvironment": "node"
+}

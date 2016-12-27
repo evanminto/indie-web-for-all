@@ -1,5 +1,12 @@
 import db from '../db';
 
+/**
+ * Private account information for a {@link User}.
+ *
+ * @member UserAccount
+ * @memberof db
+ * @type {external:Model}
+ */
 db.UserAccount = db.sequelize.define(
   'user_account',
   {

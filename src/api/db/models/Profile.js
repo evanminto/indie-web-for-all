@@ -1,5 +1,12 @@
 import db from '../db';
 
+/**
+ * Public-facing {@link User} data.
+ *
+ * @member Profile
+ * @memberof db
+ * @type {external:Model}
+ */
 db.Profile = db.sequelize.define(
   'profile',
   {

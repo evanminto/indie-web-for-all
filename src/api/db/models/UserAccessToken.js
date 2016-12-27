@@ -1,5 +1,12 @@
 import db from '../db';
 
+/**
+ * An access token allowing an API client to call the API on a {@link User}'s behalf.
+ *
+ * @member UserAccessToken
+ * @memberof db
+ * @type {external:Model}
+ */
 db.UserAccessToken = db.sequelize.define(
   'user_access_token',
   {

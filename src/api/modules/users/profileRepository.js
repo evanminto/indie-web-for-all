@@ -2,34 +2,42 @@ import db from '../../db';
 import NotFoundError from '../errors/NotFoundError';
 import Profile from './Profile';
 
+/**
+ * Handles persistence and retrieval for {@link User} [Profiles]{@link Profiles}.
+ */
 class ProfileRepository {
-  getByUserId(id) {
-    let selectedUser;
+  async getByUserId(id) {
+    const user = await db.User.findById(id);
 
-    return db.User.findById(id)
-      .then((user) => {
-        if (!user) {
-          throw new NotFoundError({
-            message: 'No user found.',
-          });
-        }
+    if (!user) {
+      throw new NotFoundError({
+        message: 'No user found.',
+      });
+    }
 
-        return user;
-      })
-        .then((user) => {
-          selectedUser = user;
+    let profile = await user.getProfile();
 
-          return user.getProfile();
-        })
-        .then((profile) => {
-          if (!profile) {
-            profile = db.Profile.build();
-            profile.setUser(selectedUser, { save: false });
-          }
+    if (!profile) {
+      profile = await db.Profile.build();
+      await profile.setUser(user, { save: false });
+    }
 
-          return profile;
-        })
-        .then((profile) => new Profile(profile));
+    return new Profile(profile);
+  }
+
+  persist(profile) {
+    const model = db.Profile.build({
+      id: profile.id,
+      user_id: profile.user.id,
+      username: profile.username,
+    });
+
+    return model.save()
+      .then(() => {
+        profile.links.forEach((link) => {
+          profileLinkRepository.persist(link);
+        });
+      });
   }
 }
 

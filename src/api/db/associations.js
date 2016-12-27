@@ -26,4 +26,4 @@ Profile.belongsTo(User);
 User.hasOne(Profile);
 
 ProfileLink.belongsTo(Profile, { as: 'profile' });
-Profile.hasMany(ProfileLink, { as: 'link' });
+Profile.hasMany(ProfileLink, { as: 'links' });
