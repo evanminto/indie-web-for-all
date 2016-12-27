@@ -1,3 +1,8 @@
+/**
+ * @external Model
+ * @see http://sequelize.readthedocs.io/en/latest/api/model/
+ */
+
 import Sequelize from 'sequelize';
 
 import config from '../../../config/server';
@@ -19,6 +24,9 @@ sequelize
     console.log('Unable to connect to the database:', error);
   });
 
+/**
+ * @namespace db
+ */
 const db = {};
 
 db.sequelize = sequelize;

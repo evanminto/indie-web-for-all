@@ -1,3 +1,13 @@
+/**
+ * @external Request
+ * @see http://expressjs.com/en/api.html#req
+ */
+
+/**
+ * @external Response
+ * @see http://expressjs.com/en/api.html#res
+ */
+
 import express from 'express';
 import bodyParser from 'body-parser';
 import multer from 'multer';

@@ -1,13 +1,3 @@
-/**
- * @external Request
- * @see http://expressjs.com/en/api.html#req
- */
-
-/**
- * @external Response
- * @see http://expressjs.com/en/api.html#res
- */
-
 import passport from 'passport';
 import { BasicStrategy } from 'passport-http';
 
@@ -49,6 +39,7 @@ passport.use(new BasicStrategy(
 /**
  * Checks username and password.
  *
+ * @function authentication/basic
  * @param  {external:Request}    request
  * @param  {external:Response}   response
  * @param  {Function}            next

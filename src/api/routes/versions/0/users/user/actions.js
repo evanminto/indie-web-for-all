@@ -1,13 +1,3 @@
-/**
- * @external Request
- * @see http://expressjs.com/en/api.html#req
- */
-
-/**
- * @external Response
- * @see http://expressjs.com/en/api.html#res
- */
-
 import HttpStatuses from 'http-status-codes';
 
 import db from '../../../../../db';
@@ -19,6 +9,8 @@ import accessTokenAuth from '../../../../../modules/authentication/accessToken';
 /**
  * Gets a user and returns it in the response.
  *
+ * @memberOf UserActions
+ * @function getUser
  * @param  {external:Request} request
  * @param  {external:Response} response
  */
@@ -57,6 +49,9 @@ export function getUser(request, response) {
     });
 }
 
+/**
+ * @namespace UserActions
+ */
 export default {
   getUser,
 };

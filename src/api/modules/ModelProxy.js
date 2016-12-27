@@ -1,8 +1,3 @@
-/**
- * @external Model
- * @see http://sequelize.readthedocs.io/en/latest/api/model/
- */
-
 export default class ModelProxy {
   /**
    * @param  {external:Model} model

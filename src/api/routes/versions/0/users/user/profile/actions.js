@@ -1,14 +1,4 @@
 /**
- * @external Request
- * @see http://expressjs.com/en/api.html#req
- */
-
-/**
- * @external Response
- * @see http://expressjs.com/en/api.html#res
- */
-
-/**
  * @external Instance
  * @see http://sequelize.readthedocs.io/en/latest/api/instance/
  */
@@ -27,6 +17,8 @@ import accessTokenAuth from '../../../../../../modules/authentication/accessToke
 /**
  * Gets a {@link User}'s {@link Profile}.
  *
+ * @memberOf ProfileActions
+ * @function getProfile
  * @param  {external:Request}   request
  * @param  {external:Response}  response
  * @return {Promise}
@@ -54,6 +46,8 @@ export async function getProfile(request, response) {
 /**
  * Updates a {@link User}'s {@link Profile}.
  *
+ * @memberOf ProfileActions
+ * @function updateProfile
  * @param  {external:Request}   request
  * @param  {external:Response}  response
  * @return {Promise}
@@ -98,6 +92,7 @@ export async function updateProfile(request, response) {
  * @param  {external:Instance} user1
  * @param  {external:Instance} user2
  * @return {Boolean}
+ * @private
  */
 function usersMatch(user1, user2) {
   if (!user1 || !user2 || user1.id !== user2.id) {
@@ -110,6 +105,7 @@ function usersMatch(user1, user2) {
 /**
  * @param  {external:Instance} user
  * @return {external:Instance} the user's existing profile, or a new one
+ * @private
  */
 async function getOrCreateProfileForUser(user) {
   const profileModel = await user.getProfile();
@@ -125,6 +121,10 @@ async function getOrCreateProfileForUser(user) {
   return profileModel;
 }
 
+
+/**
+ * @namespace ProfileActions
+ */
 export default {
   getProfile,
   updateProfile,

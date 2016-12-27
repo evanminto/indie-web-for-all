@@ -1,13 +1,10 @@
-/**
- * @external Model
- * @see http://sequelize.readthedocs.io/en/latest/api/model/
- */
-
 import db from '../db';
 
 /**
- * An access token allowing an API client to call the API on a @{User}'s behalf.
+ * An access token allowing an API client to call the API on a {@link User}'s behalf.
  *
+ * @member UserAccessToken
+ * @memberof db
  * @type {external:Model}
  */
 db.UserAccessToken = db.sequelize.define(

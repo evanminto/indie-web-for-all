@@ -1,13 +1,3 @@
-/**
- * @external Request
- * @see http://expressjs.com/en/api.html#req
- */
-
-/**
- * @external Response
- * @see http://expressjs.com/en/api.html#res
- */
-
 import HttpStatuses from 'http-status-codes';
 
 import db from '../../../../../../../db';
@@ -18,6 +8,8 @@ import NotFoundError from '../../../../../../../modules/errors/NotFoundError';
 /**
  * Gets the [ProfileLinks]{@link ProfileLink} for a {@link User}.
  *
+ * @memberof ProfileLinksActions
+ * @function getLinks
  * @param  {external:Request}   request
  * @param  {external:Response}  response
  * @return {Promise}
@@ -58,6 +50,8 @@ export async function getLinks(request, response) {
 /**
  * Adds a {@link ProfileLink} to a {@link User}'s {@link Profile}.
  *
+ * @memberof ProfileLinksActions
+ * @function addLink
  * @param  {external:Request}   request
  * @param  {external:Response}  response
  * @return {Promise}
@@ -103,6 +97,9 @@ export function updateLink(request, response) {
 
 }
 
+/**
+ * @namespace ProfileLinksActions
+ */
 export default {
   getLinks,
   addLink,

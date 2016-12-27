@@ -4,7 +4,7 @@ import ModelProxy from '../ModelProxy';
 import User from './User';
 
 /**
- * An access token allowing an API client to call the API on a @{User}'s behalf.
+ * An access token allowing an API client to call the API on a {@link User}'s behalf.
  */
 class AccessToken extends ModelProxy {
   /**
@@ -30,7 +30,7 @@ class AccessToken extends ModelProxy {
   }
 
   /**
-   * @return {User}
+   * @return {Promise.<User>}
    */
   getUser() {
     return this.model.getUser()

@@ -1,13 +1,3 @@
-/**
- * @external Request
- * @see http://expressjs.com/en/api.html#req
- */
-
-/**
- * @external Response
- * @see http://expressjs.com/en/api.html#res
- */
-
 import passport from 'passport';
 import BearerStrategy from 'passport-http-bearer';
 
@@ -36,6 +26,7 @@ passport.use(new BearerStrategy(
 /**
  * Checks that Bearer token is set to a valid access token.
  *
+ * @function authentication/accessToken
  * @param  {external:Request}    request
  * @param  {external:Response}   response
  * @param  {Function}            next

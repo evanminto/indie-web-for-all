@@ -1,14 +1,11 @@
-/**
- * @external Model
- * @see http://sequelize.readthedocs.io/en/latest/api/model/
- */
-
 import db from '../db';
 import passwordEncoder from '../../modules/users/passwordEncoder';
 
 /**
- * Login credentials for a @{User}.
+ * Login credentials for a {@link User}.
  *
+ * @member UserCredentials
+ * @memberof db
  * @type {external:Model}
  */
 db.UserCredentials = db.sequelize.define(

@@ -33,6 +33,7 @@ export default {
  * @param  {Object} state
  * @param  {String} url
  * @return {Boolean}
+ * @private
  */
 function linkUrlAlreadyExists(state, url) {
   const linkCount = state.links.length;
