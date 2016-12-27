@@ -1,7 +1,14 @@
+/**
+ * @external Model
+ * @see http://sequelize.readthedocs.io/en/latest/api/model/
+ */
+
 import db from '../db';
 
 /**
  * Public-facing @{User} data.
+ *
+ * @type {external:Model}
  */
 db.Profile = db.sequelize.define(
   'profile',

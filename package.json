@@ -16,7 +16,7 @@
     "build:client:prod": "mkdir -p app/client && browserify src/client-entry.js -t babelify -t [ envify --NODE_ENV production ] -t vueify > app/client/index.js",
     "test:unit": "NODE_ENV=test jest --config test/config/unit.json",
     "test:functional": "NODE_ENV=test jest --runInBand --config test/config/functional.json",
-    "test": "test:unit && test:functional"
+    "test": "npm run test:unit && npm run test:functional"
   },
   "repository": {
     "type": "git",

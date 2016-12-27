@@ -9,6 +9,7 @@ const expressApp = express();
 expressApp.use('/api', api);
 
 export default function start(force = false) {
+  console.log = () => {};
   return new Promise((resolve) => {
     db.sequelize.sync({ force })
       .then(() => expressApp.listen(config.port))

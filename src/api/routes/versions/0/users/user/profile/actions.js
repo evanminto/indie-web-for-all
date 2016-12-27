@@ -1,3 +1,18 @@
+/**
+ * @external Request
+ * @see http://expressjs.com/en/api.html#req
+ */
+
+/**
+ * @external Response
+ * @see http://expressjs.com/en/api.html#res
+ */
+
+/**
+ * @external Instance
+ * @see http://sequelize.readthedocs.io/en/latest/api/instance/
+ */
+
 import HttpStatuses from 'http-status-codes';
 
 import db from '../../../../../../db';
@@ -10,10 +25,11 @@ import ValidationError from '../../../../../../modules/errors/ValidationError';
 import accessTokenAuth from '../../../../../../modules/authentication/accessToken';
 
 /**
- * Gets a user profile and returns it in the response.
+ * Gets a {@link User}'s {@link Profile}.
  *
- * @param  {Request} request
- * @param  {Response} response
+ * @param  {external:Request}   request
+ * @param  {external:Response}  response
+ * @return {Promise}
  */
 export async function getProfile(request, response) {
   try {
@@ -24,11 +40,11 @@ export async function getProfile(request, response) {
   } catch (error) {
     let apiError;
 
-    if (error instanceof NotFoundError) {
-      apiError = new ApiError(HttpStatuses.NOT_FOUND, 'Profile not found.');
+    if (error instanceof BaseError) {
+      apiError = apiErrorFactory.createFromBaseError(error);
+    } else {
+      apiError = apiErrorFactory.createFromMessage(error);
     }
-
-    apiError = new ApiError(HttpStatuses.INTERNAL_SERVER_ERROR, error.message);
 
     response.status(apiError.statusCode)
       .json(apiError.json);
@@ -36,154 +52,77 @@ export async function getProfile(request, response) {
 }
 
 /**
- * Updates a user profile based on a provided request and response.
+ * Updates a {@link User}'s {@link Profile}.
  *
- * @param  {Request} request
- * @param  {Response} response
+ * @param  {external:Request}   request
+ * @param  {external:Response}  response
+ * @return {Promise}
  */
-export function updateProfile(request, response) {
-  accessTokenAuth(request, response)
-    .then((currentUser) => {
-      return db.sequelize.transaction((transaction) => {
-        return db.User.findById(request.params.id)
-          .then(checkUserMatches(currentUser.model))
-          .then(getProfile2(transaction))
-          .then(setUsernameFromRequest(request))
-          .then((profile) => profile.save({transaction}))
-          .then(addLinksFromRequest(request, transaction))
-      })
-        .then((profile) => profilePublisher.publish(profile))
-        .then((publishedProfile) => response.json(publishedProfile))
-        .catch((error) => {
-          if (error instanceof ValidationError) {
-            throw new ApiError(HttpStatuses.BAD_REQUEST, error.message);
-          }
+export async function updateProfile(request, response) {
+  try {
+    const currentUser = await accessTokenAuth(request, response);
 
-          if (error instanceof NotFoundError) {
-            throw new ApiError(HttpStatuses.NOT_FOUND, 'Profile not found.');
-          }
+    const profile = await db.sequelize.transaction(async (transaction) => {
+      const userModel = await db.User.findById(request.params.id);
 
-          throw new ApiError(HttpStatuses.INTERNAL_SERVER_ERROR, error.message);
-        });
-    })
-    .catch((error) => {
-      if (!(error instanceof ApiError)) {
-        throw new ApiError(HttpStatuses.UNAUTHORIZED, 'You must provide a valid Bearer token.');
+      if (!usersMatch(currentUser.model, userModel)) {
+        throw new AuthorizationError("User doesn't match.");
       }
 
-      throw error;
-    })
-    .catch((error) => {
-      response.status(error.statusCode)
-        .json(error.json);
+      const profileModel = await getOrCreateProfileForUser(userModel);
+
+      profileModel.username = request.body.username;
+      await profileModel.save({transaction});
+
+      return profileModel;
     });
-}
 
-/**
- * Checks if the two users match and returns them if they do.
- *
- * @param  {User} expectedUser
- * @return {Function}
- */
-function checkUserMatches(expectedUser) {
-  /**
-   * @param  {User} user
-   * @return {User}
-   * @throws {AuthorizationError} If the users don't match
-   */
-  return function check(user) {
-    if (!user || !expectedUser || user.id !== expectedUser.id) {
-      throw new AuthorizationError('Wrong user.');
+    const publishedProfile = await profilePublisher.publish(profile);
+
+    response.json(publishedProfile);
+  } catch (error) {
+    let apiError;
+
+    if (error instanceof BaseError) {
+      apiError = apiErrorFactory.createFromBaseError(error);
+    } else {
+      apiError = apiErrorFactory.createFromMessage(error);
     }
 
-    return user;
+    response.status(apiError.statusCode)
+      .json(apiError.json);
   }
 }
 
 /**
- * Checks if a username field was provided in the request and returns the profile.
- *
- * @param  {Profile} profile
- * @param  {Request} request
- * @return {Profile}
- * @throws {ValidationError} If the username field isn't provided
+ * @param  {external:Instance} user1
+ * @param  {external:Instance} user2
+ * @return {Boolean}
  */
-function checkUsernameField(profile, request) {
-  if (!request.body.username) {
-    throw new ValidationError('No username field provided.');
+function usersMatch(user1, user2) {
+  if (!user1 || !user2 || user1.id !== user2.id) {
+    return false;
   }
 
-  return profile;
-}
-
-function getProfile2(transaction) {
-  return function findOrCreateProfile(user) {
-    return user.getProfile()
-      .then((profile) => {
-        if (!profile) {
-          const newProfile = db.Profile.build();
-
-          newProfile.setUser(user, {transaction, save: false})
-
-          return newProfile;
-        }
-
-        return profile;
-      });
-  }
+  return true;
 }
 
 /**
- * Sets username for the profile based on the request body.
- *
- * @param {Request} request
+ * @param  {external:Instance} user
+ * @return {external:Instance} the user's existing profile, or a new one
  */
-function setUsernameFromRequest(request) {
-  /**
-   * @param {Profile} profile
-   */
-  return function setUsername(profile) {
-    profile.username = request.body.username;
+async function getOrCreateProfileForUser(user) {
+  const profileModel = await user.getProfile();
 
-    return profile;
-  };
-}
+  if (!profileModel) {
+    const newProfile = db.Profile.build();
 
-/**
- * @param {Request} request
- * @param {Transaction} transaction
- */
-function addLinksFromRequest(request, transaction) {
-  /**
-   * @param {Profile} profile
-   */
-  return function addLinks(profile) {
-    if (request.body.links) {
-      const promises = [];
+    newProfile.setUser(user, {transaction, save: false})
 
-      profile.getLinks()
-        .then((existingLinks) => {
-          request.body.links.forEach((link) => {
-            if (existingLinks.includes(link)) {
-              promises.push(
-                db.ProfileLink.create({
-                  url: link.url,
-                  name: link.name,
-                  rel: link.rel,
-                }, {transaction})
-              );
-            }
+    return newProfile;
+  }
 
-          });
-        });
-
-      return Promise.all(promises)
-        .then((links) => profile.setLinks(links, {transaction}))
-        .then(() => profile);
-    }
-
-    return profile;
-  };
+  return profileModel;
 }
 
 export default {

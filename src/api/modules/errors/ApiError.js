@@ -1,5 +1,8 @@
 import BaseError from './BaseError';
 
+/**
+ * Represents an error in processing an API request.
+ */
 class ApiError extends BaseError {
   constructor(statusCode = 500, message = 'Something went wrong.') {
     super(message);

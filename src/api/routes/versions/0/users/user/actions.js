@@ -1,3 +1,13 @@
+/**
+ * @external Request
+ * @see http://expressjs.com/en/api.html#req
+ */
+
+/**
+ * @external Response
+ * @see http://expressjs.com/en/api.html#res
+ */
+
 import HttpStatuses from 'http-status-codes';
 
 import db from '../../../../../db';
@@ -9,8 +19,8 @@ import accessTokenAuth from '../../../../../modules/authentication/accessToken';
 /**
  * Gets a user and returns it in the response.
  *
- * @param  {Request} request
- * @param  {Response} response
+ * @param  {external:Request} request
+ * @param  {external:Response} response
  */
 export function getUser(request, response) {
   accessTokenAuth(request, response)
@@ -34,15 +44,16 @@ export function getUser(request, response) {
         });
     })
     .catch((error) => {
-      if (error instanceof ApiError) {
-        throw error;
+      let apiError;
+
+      if (error instanceof BaseError) {
+        apiError = apiErrorFactory.createFromBaseError(error);
+      } else {
+        apiError = apiErrorFactory.createFromMessage(error);
       }
 
-      throw new ApiError(HttpStatuses.UNAUTHORIZED, 'You must provide a valid Bearer token.');
-    })
-    .catch((error) => {
-      response.status(error.statusCode)
-        .json(error.json);
+      response.status(apiError.statusCode)
+        .json(apiError.json);
     });
 }
 

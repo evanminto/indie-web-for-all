@@ -51,36 +51,6 @@ class Facade {
         .then(() => newUser);
     });
   }
-
-  setUsername({ userId, username }) {
-    let selectedUser;
-
-    return db.sequelize.transaction((t) => {
-      return db.User.findById(userId)
-        .then((user) => {
-          selectedUser = user;
-
-          if (!user) {
-            throw new NotFoundError({
-              message: 'No user found.',
-            });
-          }
-
-          if (!username) {
-            throw new ValidationError({
-              message: 'No username field provided.'
-            });
-          }
-
-          return user.createProfile({
-            username: username,
-          }, {
-            transaction: t,
-          });
-        })
-        .then(() => selectedUser);
-    });
-  }
 }
 
 export default new Facade();

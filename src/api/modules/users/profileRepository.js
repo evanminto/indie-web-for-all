@@ -2,6 +2,9 @@ import db from '../../db';
 import NotFoundError from '../errors/NotFoundError';
 import Profile from './Profile';
 
+/**
+ * Handles persistence and retrieval for {@link User} [Profiles]{@link Profiles}.
+ */
 class ProfileRepository {
   async getByUserId(id) {
     const user = await db.User.findById(id);

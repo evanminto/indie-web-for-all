@@ -1,8 +1,14 @@
+/**
+ * @external Model
+ * @see http://sequelize.readthedocs.io/en/latest/api/model/
+ */
+
 import db from '../db';
 
 /**
  * Private account information for a @{User}.
- * @type {[type]}
+ *
+ * @type {external:Model}
  */
 db.UserAccount = db.sequelize.define(
   'user_account',

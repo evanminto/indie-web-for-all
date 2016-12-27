@@ -1,3 +1,13 @@
+/**
+ * @external Request
+ * @see http://expressjs.com/en/api.html#req
+ */
+
+/**
+ * @external Response
+ * @see http://expressjs.com/en/api.html#res
+ */
+
 import passport from 'passport';
 import { BasicStrategy } from 'passport-http';
 
@@ -36,6 +46,14 @@ passport.use(new BasicStrategy(
   }
 ));
 
+/**
+ * Checks username and password.
+ *
+ * @param  {external:Request}    request
+ * @param  {external:Response}   response
+ * @param  {Function}            next
+ * @return {Promise.<User, String>}
+ */
 export default function authenticateWithBasicAuth(request, response, next) {
   return new Promise((resolve, reject) => {
     passport.authenticate('basic', (err, user, info) => {

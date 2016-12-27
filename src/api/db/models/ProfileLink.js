@@ -1,7 +1,14 @@
+/**
+ * @external Model
+ * @see http://sequelize.readthedocs.io/en/latest/api/model/
+ */
+
 import db from '../db';
 
 /**
  * Links to other pages representing or related to the user.
+ *
+ * @type {external:Model}
  */
 db.ProfileLink = db.sequelize.define(
   'profile_link',

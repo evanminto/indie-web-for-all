@@ -1,9 +1,27 @@
+/**
+ * @external Request
+ * @see http://expressjs.com/en/api.html#req
+ */
+
+/**
+ * @external Response
+ * @see http://expressjs.com/en/api.html#res
+ */
+
 import HttpStatuses from 'http-status-codes';
 
 import db from '../../../../../../../db';
+import apiErrorFactory from '../../../../../../../modules/errors/factories/apiErrorFactory';
 import ApiError from '../../../../../../../modules/errors/ApiError';
 import NotFoundError from '../../../../../../../modules/errors/NotFoundError';
 
+/**
+ * Gets the [ProfileLinks]{@link ProfileLink} for a {@link User}.
+ *
+ * @param  {external:Request}   request
+ * @param  {external:Response}  response
+ * @return {Promise}
+ */
 export async function getLinks(request, response) {
   try {
     const user = await db.User.findById(request.params.id);
@@ -26,10 +44,10 @@ export async function getLinks(request, response) {
   } catch (error) {
     let apiError;
 
-    if (error instanceof NotFoundError) {
-      apiError = new ApiError(HttpStatuses.NOT_FOUND, error.message);
+    if (error instanceof BaseError) {
+      apiError = apiErrorFactory.createFromBaseError(error);
     } else {
-      apiError = new ApiError(HttpStatuses.INTERNAL_SERVER_ERROR, error);
+      apiError = apiErrorFactory.createFromMessage(error);
     }
 
     response.status(apiError.statusCode)
@@ -37,6 +55,13 @@ export async function getLinks(request, response) {
   }
 }
 
+/**
+ * Adds a {@link ProfileLink} to a {@link User}'s {@link Profile}.
+ *
+ * @param  {external:Request}   request
+ * @param  {external:Response}  response
+ * @return {Promise}
+ */
 export function addLink(request, response) {
   db.sequelize.transaction(async (t) => {
     const user = await db.User.findById(request.params.id);

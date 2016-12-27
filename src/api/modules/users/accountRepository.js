@@ -2,6 +2,9 @@ import db from '../../db';
 import NotFoundError from '../errors/NotFoundError';
 import Account from './Account';
 
+/**
+ * Handles persistence and retrieval for user accounts.
+ */
 class AccountRepository {
   getByEmail(email) {
     let selectedUser;

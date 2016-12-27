@@ -5,34 +5,48 @@ import requestFactory from './api/v0/requestFactory';
 import store from '../vue/store';
 import { SET_CURRENT_USER_CREDS } from '../vue/store/mutationTypes';
 
+/**
+ * A user's current usage session.
+ */
 class Session {
+  /**
+   * @type {Number}
+   */
   get userId() {
     return cookies.getItem('user_id') || store.state.currentSession.userId;
   }
 
+  /**
+   * @type {String}
+   */
   get userAccessToken() {
     return cookies.getItem('user_access_token') || store.state.currentSession.userAccessToken;
   }
 
-  checkUserLoggedIn() {
-    return new Promise((resolve) => {
-      if (!this.userId || !this.userAccessToken) {
-        resolve(false);
-      }
+  /**
+   * @return {Promise.<Boolean>} true if the user is logged in, false if not
+   */
+  async checkUserLoggedIn() {
+    if (!this.userId || !this.userAccessToken) {
+      return false;
+    }
 
-      const request = requestFactory.verifyUserAccessToken(this.userAccessToken, this.userId);
+    const request = requestFactory.verifyUserAccessToken(this.userAccessToken, this.userId);
+    const response = await fetch(request);
 
-      return fetch(request)
-        .then((response) => {
-          if (response.ok) {
-            resolve(true);
-          } else {
-            resolve(false);
-          }
-        });
-    });
+    if (response.ok) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
+  /**
+   * Sets the current user credentials to keep the user logged in.
+   *
+   * @param  {Number} userId
+   * @param  {String} userAccessToken
+   */
   useCredentials(userId, userAccessToken) {
     store.commit(SET_CURRENT_USER_CREDS, {
       id: userId,
@@ -45,6 +59,13 @@ class Session {
     }
   }
 
+  /**
+   * Attempts to log the user in using an email and password.
+   *
+   * @param  {String} email
+   * @param  {String} password
+   * @return {Promise.<Boolean>} true if the user was successfully logged in, false if not
+   */
   async logIn(email, password) {
     const request = requestFactory.getUserAccessToken({
       email,
@@ -58,12 +79,10 @@ class Session {
 
       this.useCredentials(data.userId, data.token);
 
-      return;
+      return true;
     }
 
-    const data = await response.json();
-
-    return Promise.reject(data);
+    return false;
   }
 }
 
