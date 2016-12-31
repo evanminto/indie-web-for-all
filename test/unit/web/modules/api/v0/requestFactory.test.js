@@ -53,32 +53,31 @@ describe('API v0 Request Factory', () => {
     });
   });
 
-  describe('getUserAccessToken()', () => {
+  describe('createUserAccessToken()', () => {
     const email = 'test@example.com';
     const password = 'asdf';
 
-    const request = apiRequestFactory.getUserAccessToken({
+    const request = apiRequestFactory.createUserAccessToken({
       email,
       password,
     });
 
     it('sets a URL', () => {
-      expect(request.url).toEqual(`${config.baseUrl}/api/v0/users/access_tokens`);
+      expect(request.url).toEqual(`${config.baseUrl}/api/v0/user_access_tokens`);
     });
 
-    it('sets GET as method', () => {
-      expect(request.method).toEqual('GET');
+    it('sets POST as method', () => {
+      expect(request.method).toEqual('POST');
     });
   });
 
-  describe('verifyUserAccessToken()', () => {
+  describe('getUserAccessToken()', () => {
     const token = 'asdfasdf';
-    const userId = 1;
 
-    const request = apiRequestFactory.verifyUserAccessToken(token, userId);
+    const request = apiRequestFactory.getUserAccessToken(token);
 
     it('sets a URL', () => {
-      expect(request.url).toEqual(`${config.baseUrl}/api/v0/users/access_tokens?token=${token}&user_id=${userId}`);
+      expect(request.url).toEqual(`${config.baseUrl}/api/v0/user_access_tokens/${token}`);
     });
 
     it('sets GET as method', () => {

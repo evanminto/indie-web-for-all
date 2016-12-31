@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import baseTemplate from './web/templates/base.hbs';
 import config from '../config/server';
 import { app as vueApp, router as vueRouter } from './web/vue';
-import currentSession from './web/modules/currentSession';
+import userAuthentication from './web/modules/userAuthentication';
 import db from './api/db';
 import api from './api';
 
@@ -23,8 +23,8 @@ expressApp.use('/api', api);
 // expressApp.get('/*', vue);
 
 expressApp.get('/*', (request, response) => {
-  if (request.cookies.user_id && request.cookies.user_access_token) {
-    currentSession.useCredentials(request.cookies.user_id, request.cookies.user_access_token);
+  if (request.cookies.user_access_token) {
+    userAuthentication.continueSession(request.cookies.user_access_token);
   }
 
   // Causing a problem now?

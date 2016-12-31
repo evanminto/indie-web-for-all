@@ -7,9 +7,12 @@ import store from './store';
 sync(store, router);
 
 const app = new Vue({
-  render: function render(createElement) {
+  name: 'App',
+
+  render(createElement) {
     return createElement('router-view');
   },
+
   router: router,
 });
 

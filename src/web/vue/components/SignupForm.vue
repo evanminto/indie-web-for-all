@@ -26,7 +26,7 @@
   import { SIGNUP_SET_EMAIL, SIGNUP_SET_PASSWORD } from '../store/mutationTypes';
   import { SETTINGS } from '../router/routes';
   import store from '../store';
-  import currentSession from '../../modules/currentSession';
+  import userAuthentication from '../../modules/userAuthentication';
   import userRegistrar from '../../modules/userRegistrar';
 
   export default {
@@ -68,11 +68,21 @@
         event.preventDefault();
 
         try {
-          const data = await userRegistrar.register(this.$data.email, this.$data.password);
+          const data = await userRegistrar.register(
+            store.state.signupForm.email,
+            store.state.signupForm.password
+          );
 
-          await currentSession.logIn(this.$data.email, this.$data.password);
+          const loginSuccess = await userAuthentication.logIn(
+            store.state.signupForm.email,
+            store.state.signupForm.password
+          );
 
-          this.$router.push(SETTINGS);
+          if (loginSuccess) {
+            this.$router.push(SETTINGS);
+          } else {
+            // TODO: Show error message.
+          }
         } catch (error) {
           throw error;
 

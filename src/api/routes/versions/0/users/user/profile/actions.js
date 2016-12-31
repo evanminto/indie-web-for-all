@@ -7,6 +7,8 @@ import HttpStatuses from 'http-status-codes';
 
 import db from '../../../../../../db';
 import ApiError from '../../../../../../modules/errors/ApiError';
+import BaseError from '../../../../../../modules/errors/BaseError';
+import apiErrorFactory from '../../../../../../modules/errors/factories/apiErrorFactory';
 import AuthorizationError from '../../../../../../modules/errors/AuthorizationError';
 import profilePublisher from '../../../../../../modules/publishers/profile';
 import profileRepository from '../../../../../../modules/users/profileRepository';

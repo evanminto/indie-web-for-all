@@ -21,7 +21,8 @@ class ApiError extends BaseError {
   /**
    * The JSON body to use when returning this error in the API response.
    *
-   * @return {Object}
+   * @type {Object}
+   * @readOnly
    */
   get json() {
     // TODO: Add prod-specific message.

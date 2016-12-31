@@ -4,11 +4,12 @@ import VueRouter from 'vue-router';
 import LoginRoute from './routes/Login.vue';
 import SettingsRoute from './routes/Settings.vue';
 import SignupRoute from './routes/Signup.vue';
-import currentSession from '../../modules/currentSession';
+import userAuthentication from '../../modules/userAuthentication';
 
 import {
   INDEX,
   LOGIN,
+  LOGOUT,
   SETTINGS,
   SIGNUP,
 } from './routes';
@@ -34,27 +35,28 @@ const router = new VueRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
-  if (authenticatedRoutes.indexOf(to.path) > -1) {
-    currentSession.checkUserLoggedIn()
-      .then((loggedIn) => {
-        if (loggedIn) {
-          next();
-        } else {
-          next(LOGIN);
-        }
-      })
-      .catch(() => next(LOGIN));
-  } else if (unauthenticatedRoutes.indexOf(to.path) > -1) {
-    currentSession.checkUserLoggedIn()
-      .then((loggedIn) => {
-        if (loggedIn) {
-          next(SETTINGS);
-        } else {
-          next();
-        }
-      })
-      .catch(() => next(SETTINGS));
+let attemptedSessionContinue = false;
+
+router.beforeEach(async (to, from, next) => {
+  // Only continue once per app instance.
+  if (!userAuthentication.isLoggedIn && !attemptedSessionContinue) {
+    await userAuthentication.continueSession();
+
+    attemptedSessionContinue = true;
+  }
+
+  if (authenticatedRoutes.includes(to.path)) {
+    if (userAuthentication.isLoggedIn) {
+      next();
+    } else {
+      next(LOGIN);
+    }
+  } else if (unauthenticatedRoutes.includes(to.path)) {
+    if (userAuthentication.isLoggedIn) {
+      next(SETTINGS);
+    } else {
+      next();
+    }
   } else {
     next();
   }

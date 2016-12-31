@@ -5,4 +5,7 @@ import { app, router } from './web/vue';
 
 router.replace(location.pathname);
 
-domReady().then(() => app.$mount('#app'));
+(async () => {
+  await domReady();
+  app.$mount('#app');
+})();

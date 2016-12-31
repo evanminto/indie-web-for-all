@@ -54,11 +54,11 @@ class RequestFactory {
    * @param  {String} data.password
    * @return {Request}
    */
-  getUserAccessToken({ email, password }) {
+  createUserAccessToken({ email, password }) {
     const encodedCreds = btoa(`${email}:${password}`);
 
-    return new Request(this.generateUrl(`/api/v0/users/access_tokens`), {
-      method: 'GET',
+    return new Request(this.generateUrl(`/api/v0/user_access_tokens`), {
+      method: 'POST',
       headers: {
         'Authorization': `Basic ${encodedCreds}`,
       },
@@ -67,11 +67,10 @@ class RequestFactory {
 
   /**
    * @param  {String} token
-   * @param  {Number} userId
    * @return {Request}
    */
-  verifyUserAccessToken(token, userId) {
-    return new Request(this.generateUrl(`/api/v0/users/access_tokens?token=${token}&user_id=${userId}`), {
+  getUserAccessToken(token) {
+    return new Request(this.generateUrl(`/api/v0/user_access_tokens/${token}`), {
       method: 'GET',
     });
   }

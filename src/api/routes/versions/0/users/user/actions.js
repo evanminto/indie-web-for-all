@@ -2,6 +2,8 @@ import HttpStatuses from 'http-status-codes';
 
 import db from '../../../../../db';
 import ApiError from '../../../../../modules/errors/ApiError';
+import apiErrorFactory from '../../../../../modules/errors/factories/apiErrorFactory';
+import BaseError from '../../../../../modules/errors/BaseError';
 import userPublisher from '../../../../../modules/publishers/user';
 import NotFoundError from '../../../../../modules/errors/NotFoundError';
 import accessTokenAuth from '../../../../../modules/authentication/accessToken';

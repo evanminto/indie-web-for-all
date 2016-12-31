@@ -1,6 +1,5 @@
 import AccessToken from './AccessToken';
 import ModelProxy from '../ModelProxy';
-import profileRepository from './profileRepository';
 
 /**
  * A user of the service.

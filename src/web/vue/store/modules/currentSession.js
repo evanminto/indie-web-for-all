@@ -1,5 +1,4 @@
-import { USER_IS_LOGGED_IN } from '../getterTypes';
-import { SET_CURRENT_USER_CREDS } from '../mutationTypes';
+import { SESSION_SET_CREDS, SESSION_CLEAR } from '../mutationTypes';
 
 export default {
   state: {
@@ -8,15 +7,20 @@ export default {
   },
 
   getters: {
-    [USER_IS_LOGGED_IN](state) {
+    sessionHasCredentials(state) {
       return Boolean(state.userId && state.userAccessToken);
     },
   },
 
   mutations: {
-    [SET_CURRENT_USER_CREDS](state, { id, accessToken }) {
-      state.userId = id;
+    [SESSION_SET_CREDS](state, { accessToken, userId }) {
+      state.userId = userId;
       state.userAccessToken = accessToken;
+    },
+
+    [SESSION_CLEAR](state) {
+      state.userId = undefined;
+      state.userAccessToken = undefined;
     },
   },
 };

@@ -9,7 +9,7 @@
 <script>
   import store from '../store';
   import { LOGIN_SET_EMAIL, LOGIN_SET_PASSWORD } from '../store/mutationTypes';
-  import currentSession from '../../modules/currentSession';
+  import userAuthentication from '../../modules/userAuthentication';
   import userRegistrar from '../../modules/userRegistrar';
   import { SETTINGS } from '../router/routes';
 
@@ -49,13 +49,18 @@
         event.preventDefault();
 
         try {
-          await currentSession.logIn(
+          const success = await userAuthentication.logIn(
             store.state.loginForm.email,
             store.state.loginForm.password
           );
 
-          this.$router.push(SETTINGS);
+          if (success) {
+            this.$router.push(SETTINGS);
+          } else {
+            // TODO: Show error message.
+          }
         } catch (error) {
+          // TODO: Show error message.
           console.error('Failed to log in:', data);
         }
       }

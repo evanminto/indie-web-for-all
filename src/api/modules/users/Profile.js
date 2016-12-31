@@ -1,4 +1,3 @@
-import db from '../../db';
 import ModelProxy from '../ModelProxy';
 import ProfileLink from './ProfileLink';
 

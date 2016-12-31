@@ -3,93 +3,110 @@ import HttpStatuses from 'http-status-codes';
 
 import start from '../../../server';
 
+let server;
+
 describe('API v0', () => {
   describe('POST /users', () => {
+    const email = `evan.minto@gmail.com`;
+    const password = 'asdfasdf';
+
+    let data;
+
+    beforeEach(async () => {
+      server = await start(true);
+
+      await new Promise((resolve) => {
+        request.post({
+          url: 'http://localhost:3000/api/v0/users',
+          form: {
+            email,
+            password,
+          },
+        }, (error, response, body) => {
+          expect(error).toBeFalsy();
+
+          data = JSON.parse(body);
+          resolve();
+        });
+      });
+    });
+
     it('creates a new user', () => {
-      return start()
-        .then((server) => {
-          return new Promise((resolve) => {
-            const dateString = Date.now();
+      expect(data.id).toBeTruthy();
+      expect(data.email).toEqual(email);
+    });
 
-            request.post({
-              url: 'http://localhost:3000/api/v0/users',
-              form: {
-                email: `evan+${dateString}@example.com`,
-                password: 'asdfasdf',
-              },
-            }, (error, response, body) => {
+    describe('POST /user_access_tokens', () => {
+      let userId;
+      let response;
+
+      beforeEach(async () => {
+        userId = data.id;
+        data = undefined;
+
+        await new Promise((resolve) => {
+          request.post({
+            url: `http://localhost:3000/api/v0/user_access_tokens`,
+            auth: {
+              password,
+              user: email,
+            },
+          }, (error, res, body) => {
+            expect(error).toBeFalsy();
+            response = res;
+            data = JSON.parse(body);
+            resolve();
+          });
+        });
+      });
+
+      it('creates an access token', () => {
+        expect(response.statusCode).toEqual(200);
+        expect(data.userId).toEqual(userId);
+        expect(data.token).toBeTruthy();
+      });
+
+      describe('GET /user_access_tokens with the provided token', () => {
+        beforeEach(async () => {
+          const tokenValue = data.token;
+
+          response = undefined;
+          data = undefined;
+
+          await new Promise((resolve) => {
+            request({
+              url: `http://localhost:3000/api/v0/user_access_tokens/${tokenValue}`,
+            }, (error, res, body) => {
               expect(error).toBeFalsy();
-
-              const data = JSON.parse(body);
-
-              expect(data.id).toBeTruthy();
-              expect(data.email).toEqual(`evan+${dateString}@example.com`);
-
-              server.close();
+              response = res;
+              data = JSON.parse(body);
               resolve();
             });
           });
         });
-    });
-  });
 
-  describe('POST /users, then GET /users/access_tokens', () => {
-    it('creates and gets a user', () => {
-      return start(true)
-        .then((server) => {
-          const dateString = Date.now();
-          const email = `evan+${dateString}@example.com`;
-          const password = 'asdfasdf';
-
-          return new Promise((resolve) => {
-            request.post({
-              url: 'http://localhost:3000/api/v0/users',
-              form: {
-                email,
-                password,
-              },
-            }, (error, response, body) => {
-              expect(error).toBeFalsy();
-              expect(response.statusCode).toEqual(201);
-
-              const data = JSON.parse(body);
-
-              resolve(data.id);
-            });
-          })
-            .then((userId) => {
-              return new Promise((resolve) => {
-                request({
-                  url: `http://localhost:3000/api/v0/users/access_tokens`,
-                  auth: {
-                    password,
-                    user: email,
-                  },
-                }, (error, response, body) => {
-                  expect(error).toBeFalsy();
-                  expect(response.statusCode).toEqual(200);
-
-                  const data = JSON.parse(body);
-
-                  expect(data.userId).toEqual(userId);
-                  expect(data.token).toBeTruthy();
-
-                  server.close();
-                  resolve();
-                });
-              });
-            });
+        it('returns user ID', () => {
+          expect(response).toBeTruthy();
+          expect(data).toBeTruthy();
+          expect(response.statusCode).toEqual(200);
+          expect(data.userId).toEqual(userId);
+          expect(data.token).toBeTruthy();
         });
+      });
+    });
+
+    afterEach(() => {
+      server.close();
     });
   });
 
-  describe('GET /users/access_tokens with invalid token', () => {
+  describe('GET /user_access_tokens with invalid token', () => {
     it('returns an Unauthorized response', async () => {
       const server = await start(true);
 
       await new Promise((resolve) => {
         request({
-          url: 'http://localhost:3000/api/v0/users/access_tokens?token=asdfasdf&user_id=1234',
+          url: 'http://localhost:3000/api/v0/user_access_tokens/asdfasdf',
         }, (error, response, body) => {
           expect(error).toBeFalsy();
           expect(response.statusCode).toEqual(HttpStatuses.NOT_FOUND);
