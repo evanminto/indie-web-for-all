@@ -85,11 +85,25 @@ describe('API v0 Request Factory', () => {
     });
   });
 
-  describe('getProfile()', () => {
-    const request = apiRequestFactory.getProfile();
+  describe('getProfileByUserId()', () => {
+    const id = 5678;
+    const request = apiRequestFactory.getProfileByUserId(id);
 
     it('sets a URL', () => {
-      expect(request.url).toEqual(`${config.baseUrl}/api/v0/users/1234/profile`);
+      expect(request.url).toEqual(`${config.baseUrl}/api/v0/users/${id}/profile`);
+    });
+
+    it('sets GET as method', () => {
+      expect(request.method).toEqual('GET');
+    });
+  });
+
+  describe('getProfilesByUsername()', () => {
+    const username = 'vamptvo';
+    const request = apiRequestFactory.getProfilesByUsername(username);
+
+    it('sets a URL', () => {
+      expect(request.url).toEqual(`${config.baseUrl}/api/v0/profiles?username=${username}`);
     });
 
     it('sets GET as method', () => {

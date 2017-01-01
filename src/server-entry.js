@@ -1,50 +1,31 @@
+/**
+ * @external Request
+ * @see http://expressjs.com/en/api.html#req
+ */
+
+/**
+ * @external Response
+ * @see http://expressjs.com/en/api.html#res
+ */
+
 import 'babel-polyfill';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 
-import baseTemplate from './web/templates/base.hbs';
-import config from '../config/server';
-import { app as vueApp, router as vueRouter } from './web/vue';
-import userAuthentication from './web/modules/userAuthentication';
-import db from './api/db';
 import api from './api';
-
-process.env.VUE_ENV = 'server';
+import config from '../config/server';
+import db from './api/db';
+import web from './web/server';
 
 const expressApp = express();
-const vueRenderer = require('vue-server-renderer').createRenderer();
 
 expressApp.use(cookieParser());
 
 expressApp.use('/assets', express.static('app/client'));
-
-// expressApp.use('/assets', assets);
 expressApp.use('/api', api);
-// expressApp.get('/*', vue);
+expressApp.use(web);
 
-expressApp.get('/*', (request, response) => {
-  if (request.cookies.user_access_token) {
-    userAuthentication.continueSession(request.cookies.user_access_token);
-  }
-
-  // Causing a problem now?
-  // vueRouter.replace(request.path);
-
-  vueRenderer.renderToString(vueApp, (error, vueHtml) => {
-    if (error) {
-      console.log(error);
-    }
-
-    const html = baseTemplate({
-      app: vueHtml,
-    });
-
-    response
-      .set('Content-Type', 'text/html')
-      .send(html);
-  });
-});
-
+// Start the application.
 (async () => {
   await db.sequelize.sync({ force: true });
   expressApp.listen(config.port);

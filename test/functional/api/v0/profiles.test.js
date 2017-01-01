@@ -1,4 +1,5 @@
 import request from 'request';
+
 import start from '../../../server';
 
 describe('API v0', () => {
@@ -245,12 +246,88 @@ describe('API v0', () => {
       });
     });
   });
+
+  describe('/profiles', () => {
+    beforeEach(async () => {
+      const { userId, token } = await signUpAndLogIn('evan2@example.com', 'asdfasdf');
+      const username = 'vamptvo';
+
+      await new Promise((resolve) => {
+        request.patch({
+          url: `http://localhost:3000/api/v0/users/${userId}/profile`,
+          auth: {
+            bearer: token,
+          },
+          form: {
+            username,
+          },
+        }, resolve);
+      });
+    });
+
+    describe('?username=<valid username>', () => {
+      let error;
+      let response;
+      let body;
+
+      beforeEach(async () => {
+        await new Promise((resolve) => {
+          request(
+            `http://localhost:3000/api/v0/profiles?username=vamptvo`,
+            (responseError, responseData, responseBody) => {
+              error = responseError;
+              response = responseData;
+              body = responseBody;
+              resolve();
+            }
+          );
+        });
+      });
+
+      it('returns a single item', () => {
+        expect(error).toBeFalsy();
+        expect(response.statusCode).toEqual(200);
+
+        const data = JSON.parse(body);
+
+        expect(data.length).toEqual(1);
+        expect(data[0].username).toEqual('vamptvo');
+      });
+    });
+
+    describe('?username=<invalid username>', () => {
+      let error;
+      let response;
+      let body;
+
+      beforeEach(async () => {
+        await new Promise((resolve) => {
+          request(
+            `http://localhost:3000/api/v0/profiles?username=evanminto`,
+            (responseError, responseData, responseBody) => {
+              error = responseError;
+              response = responseData;
+              body = responseBody;
+              resolve();
+            }
+          );
+        });
+      });
+
+      it('returns an empty items array', () => {
+        expect(error).toBeFalsy();
+        expect(response.statusCode).toEqual(200);
+
+        const data = JSON.parse(body);
+
+        expect(data.length).toEqual(0);
+      });
+    });
+  });
 });
 
-async function signUpAndLogIn() {
+async function signUpAndLogIn(email = 'evan@example.com', password = 'asdfasdf') {
   const dateString = Date.now();
-  const email = 'evan@example.com';
-  const password = 'asdfasdf';
 
   const userId = await new Promise((resolve) => {
     request.post({
@@ -277,13 +354,7 @@ async function signUpAndLogIn() {
         user: email,
       },
     }, (error, response, body) => {
-      // expect(error).toBeFalsy();
-      // expect(response.statusCode).toEqual(200);
-
       const data = JSON.parse(body);
-
-      // expect(data.userId).toEqual(userId);
-      // expect(data.token).toBeTruthy();
 
       resolve(data);
     });

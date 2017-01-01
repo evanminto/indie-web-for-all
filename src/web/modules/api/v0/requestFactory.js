@@ -76,10 +76,21 @@ class RequestFactory {
   }
 
   /**
+   * @param {Number} userId
    * @return {Request}
    */
-  getProfile() {
-    return new Request(this.generateUrl(`/api/v0/users/${currentSession.userId}/profile`), {
+  getProfileByUserId(userId) {
+    return new Request(this.generateUrl(`/api/v0/users/${userId}/profile`), {
+      method: 'GET',
+    });
+  }
+
+  /**
+   * @param {String} username
+   * @return {Request}
+   */
+  getProfilesByUsername(username) {
+    return new Request(this.generateUrl(`/api/v0/profiles?username=${username}`), {
       method: 'GET',
     });
   }

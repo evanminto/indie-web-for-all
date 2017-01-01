@@ -1,5 +1,6 @@
 import cookies from 'js-cookies';
 
+import currentSession from './currentSession';
 import requestFactory from './api/v0/requestFactory';
 import store from '../vue/store';
 import { CHANGE_USERNAME, SET_USER_PROFILE_LINKS } from '../vue/store/mutationTypes';
@@ -14,7 +15,7 @@ class Profile {
    * @return {Promise}
    */
   async initialize() {
-    const profileRequest = requestFactory.getProfile();
+    const profileRequest = requestFactory.getProfileByUserId(currentSession.userId);
     const linksRequest = requestFactory.getProfileLinks();
 
     try {
