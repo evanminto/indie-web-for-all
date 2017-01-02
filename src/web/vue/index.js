@@ -7,13 +7,13 @@ import store from './store';
 sync(store, router);
 
 const app = new Vue({
+  router,
+  store,
   name: 'App',
 
   render(createElement) {
     return createElement('router-view');
   },
-
-  router: router,
 });
 
 export default app;

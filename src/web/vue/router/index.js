@@ -1,15 +1,20 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
+import apiClient from '../../modules/api/v0/client';
+import config from '../../../../config/client';
 import LoginRoute from './routes/Login.vue';
+import ProfileRoute from './routes/Profile.vue';
 import SettingsRoute from './routes/Settings.vue';
 import SignupRoute from './routes/Signup.vue';
 import userAuthentication from '../../modules/userAuthentication';
+import { PROFILE_SET } from '../store/mutationTypes';
 
 import {
   INDEX,
   LOGIN,
   LOGOUT,
+  PROFILE,
   SETTINGS,
   SIGNUP,
 } from './routes';
@@ -32,6 +37,7 @@ const router = new VueRouter({
     { path: LOGIN, component: LoginRoute },
     { path: SETTINGS, component: SettingsRoute },
     { path: SIGNUP, component: SignupRoute },
+    { path: PROFILE, component: ProfileRoute },
   ],
 });
 
@@ -39,7 +45,11 @@ let attemptedSessionContinue = false;
 
 router.beforeEach(async (to, from, next) => {
   // Only continue once per app instance.
-  if (!userAuthentication.isLoggedIn && !attemptedSessionContinue) {
+  if (
+    (authenticatedRoutes.concat(unauthenticatedRoutes)).includes(to.path) &&
+    !userAuthentication.isLoggedIn &&
+    !attemptedSessionContinue
+  ) {
     await userAuthentication.continueSession();
 
     attemptedSessionContinue = true;

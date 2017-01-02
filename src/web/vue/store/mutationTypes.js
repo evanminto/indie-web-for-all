@@ -2,6 +2,7 @@ export const ADD_USER_PROFILE_LINK = 'addUserProfileLink';
 export const CHANGE_USERNAME = 'changeUsername';
 export const LOGIN_SET_EMAIL = 'setLoginEmail';
 export const LOGIN_SET_PASSWORD = 'setLoginPassword';
+export const PROFILE_SET = 'profileSet';
 export const SESSION_SET_CREDS = 'sessionSetCreds';
 export const SESSION_CLEAR = 'sessionClear';
 export const SET_USER_PROFILE_LINKS = 'setUserProfileLinks';
@@ -14,6 +15,7 @@ export default {
   CHANGE_USERNAME,
   LOGIN_SET_EMAIL,
   LOGIN_SET_PASSWORD,
+  PROFILE_SET,
   SESSION_SET_CREDS,
   SESSION_CLEAR,
   SET_USER_PROFILE_LINKS,

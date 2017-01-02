@@ -7,6 +7,6 @@ const router = express.Router({
 });
 
 router.get('/:username', getProfile);
-router.all('/*', fallback);
+router.get('/*', fallback);
 
 export default router;
