@@ -21,6 +21,12 @@
       <ul>
         <li v-for="(link, index) in links">
           <fieldset name="links[]" @input="updateLink">
+            <input
+              name="rel"
+              type="hidden"
+              :value="link.rel"
+            >
+
             <label>
               <span class="label-text">URL</span>
               <input
@@ -74,9 +80,9 @@
       username: () => currentUserProfile.getUsername(),
 
       links() {
-        return currentUserProfile.getLinks().concat([{
+        return currentUserProfile.getLinks().concat({
           rel: 'me',
-        }]);
+        });
       },
     },
 

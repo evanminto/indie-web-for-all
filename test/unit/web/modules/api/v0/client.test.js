@@ -1,14 +1,20 @@
 const MockProfile = jest.genMockFromModule(
-  '../../../../../../src/web/modules/api/v0/entities/Profile'
+  '../../../../../../src/web/modules/api/v0/entities/Profile',
 );
 
 jest.mock('../../../../../../src/web/modules/api/v0/entities/Profile', () => MockProfile);
+
+const MockProfileLink = jest.genMockFromModule(
+  '../../../../../../src/web/modules/api/v0/entities/ProfileLink',
+);
+
+jest.mock('../../../../../../src/web/modules/api/v0/entities/ProfileLink', () => MockProfileLink);
 
 let mockRequestFactory;
 
 jest.mock('../../../../../../src/web/modules/api/v0/requestFactory', () => {
   mockRequestFactory = jest.genMockFromModule(
-    '../../../../../../src/web/modules/api/v0/requestFactory'
+    '../../../../../../src/web/modules/api/v0/requestFactory',
   );
 
   return mockRequestFactory;
@@ -71,6 +77,81 @@ describe('v0 ApiClient', () => {
 
         it('is null', () => {
           expect(result).toBeNull();
+        });
+      });
+    });
+  });
+
+  describe('getProfileLinksByProfileId()', () => {
+    let profiles;
+
+    beforeEach(() => {
+      mockRequestFactory.default.getProfileLinksByProfileId.mockImplementation((id) => {
+        return { id };
+      });
+
+      window.fetch.mockImplementation(async (request) => {
+        const items = [];
+
+        if (request.id === 1234) {
+          items.push({
+            url: 'http://example.com/1',
+            name: 'One',
+            rel: 'me',
+          });
+
+          items.push({
+            url: 'http://example.com/2',
+            name: 'Two',
+            rel: 'me',
+          });
+        }
+
+        return {
+          ok: true,
+          async json() {
+            return items;
+          },
+        };
+      });
+    });
+
+    describe('when passing a valid ID', () => {
+      describe('return value', () => {
+        beforeEach(async () => {
+          profiles = await client.getProfileLinksByProfileId(1234);
+        });
+
+        it('is an instance of ProfileLink', () => {
+          profiles.forEach((profile) => {
+            expect(profile).toBeInstanceOf(MockProfileLink.default);
+          });
+        });
+
+        it('invokes ProfileLink constructor with the data', () => {
+          expect(MockProfileLink.default).toBeCalledWith({
+            url: 'http://example.com/1',
+            name: 'One',
+            rel: 'me',
+          });
+
+          expect(MockProfileLink.default).toBeCalledWith({
+            url: 'http://example.com/2',
+            name: 'Two',
+            rel: 'me',
+          });
+        });
+      });
+    });
+
+    describe('when passing an invalid ID', () => {
+      describe('return value', () => {
+        beforeEach(async () => {
+          profiles = await client.getProfileLinksByProfileId(4321);
+        });
+
+        it('is an empty array', () => {
+          expect(profiles).toEqual([]);
         });
       });
     });

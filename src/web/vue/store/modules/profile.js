@@ -9,12 +9,14 @@ export default {
   state: {
     username: '',
     path: '',
+    links: [],
   },
 
   mutations: {
-    [PROFILE_SET](state, { username, path }) {
+    [PROFILE_SET](state, { username, path, links }) {
       state.username = username;
       state.path = path;
+      state.links = links;
     },
   },
 };

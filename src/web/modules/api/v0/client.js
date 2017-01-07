@@ -1,4 +1,5 @@
 import Profile from './entities/Profile';
+import ProfileLink from './entities/ProfileLink';
 import requestFactory from './requestFactory';
 
 /**
@@ -26,6 +27,24 @@ class ApiClient {
     }
 
     return null;
+  }
+  /**
+   * Finds the public links for a profile
+   *
+   * @param  {String} id
+   * @return {Promise.<ProfileLink[]>}
+   */
+  async getProfileLinksByProfileId(id) {
+    const request = requestFactory.getProfileLinksByProfileId(id);
+    const response = await fetch(request);
+
+    if (response.ok) {
+      const links = await response.json();
+
+      return links.map(link => new ProfileLink(link));
+    }
+
+    return [];
   }
 }
 

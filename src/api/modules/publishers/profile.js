@@ -8,6 +8,7 @@ class ProfilePublisher {
    */
   publish(profile) {
     return {
+      id: profile.id,
       username: profile.username,
     };
   }

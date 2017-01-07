@@ -2,12 +2,21 @@ const Profile = require('../../../../../../../src/web/modules/api/v0/entities/Pr
 
 describe('Profile', () => {
   describe('constructor()', () => {
-    it('sets username', () => {
-      const profile = new Profile({
+    let profile;
+
+    beforeEach(() => {
+      profile = new Profile({
+        id: 1234,
         username: 'vamptvo',
       });
+    });
 
-      expect(profile.username).toEqual('vamptvo');
+    it('sets id', () => {
+      expect(profile.id).toBe(1234);
+    });
+
+    it('sets username', () => {
+      expect(profile.username).toBe('vamptvo');
     });
   });
 });

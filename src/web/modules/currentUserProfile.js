@@ -68,7 +68,14 @@ class Profile {
    * @return {Object[]}
    */
   getLinks() {
-    return store.state.currentUserProfile.links;
+    return store.state.currentUserProfile.links.map((link) => {
+      const newLink = Object.assign({}, link);
+
+      // Hardcore rel-me
+      newLink.rel = 'me';
+
+      return newLink;
+    });
   }
 
   /**
@@ -97,6 +104,7 @@ class Profile {
         linkRequests.push(requestFactory.addProfileLink({
           name: link.name,
           url: link.url,
+          rel: link.rel,
         }));
       }
     });

@@ -1,5 +1,6 @@
 import request from 'request';
 
+import requestFacade from '../../../requestFacade';
 import start from '../../../server';
 
 describe('API v0', () => {
@@ -273,13 +274,13 @@ describe('API v0', () => {
       beforeEach(async () => {
         await new Promise((resolve) => {
           request(
-            `http://localhost:3000/api/v0/profiles?username=vamptvo`,
+            'http://localhost:3000/api/v0/profiles?username=vamptvo',
             (responseError, responseData, responseBody) => {
               error = responseError;
               response = responseData;
               body = responseBody;
               resolve();
-            }
+            },
           );
         });
       });
@@ -303,13 +304,13 @@ describe('API v0', () => {
       beforeEach(async () => {
         await new Promise((resolve) => {
           request(
-            `http://localhost:3000/api/v0/profiles?username=evanminto`,
+            'http://localhost:3000/api/v0/profiles?username=evanminto',
             (responseError, responseData, responseBody) => {
               error = responseError;
               response = responseData;
               body = responseBody;
               resolve();
-            }
+            },
           );
         });
       });
@@ -324,12 +325,49 @@ describe('API v0', () => {
       });
     });
   });
+
+  describe('/profiles/:id/links', () => {
+    describe('GET', () => {
+      let error;
+      let response;
+      let body;
+
+      beforeEach(async () => {
+        await await requestFacade.patch({
+          url: `http://localhost:3000/api/v0/users/${userId}/profile`,
+          auth: {
+            bearer: token,
+          },
+          form: {
+            username: 'vamptvo',
+          },
+        });
+
+        ({ error, response, body } = await requestFacade.get(
+          'http://localhost:3000/api/v0/profiles?username=vamptvo',
+        ));
+
+        const profileId = JSON.parse(body)[0].id;
+
+        ({ error, response, body } = await requestFacade.get(
+          `http://localhost:3000/api/v0/profiles/${profileId}/links`,
+        ));
+      });
+
+      it('returns links', async () => {
+        expect(error).toBeFalsy();
+        expect(response.statusCode).toEqual(200);
+
+        const data = JSON.parse(body);
+
+        expect(data.forEach).toBeDefined();
+      });
+    });
+  });
 });
 
 async function signUpAndLogIn(email = 'evan@example.com', password = 'asdfasdf') {
-  const dateString = Date.now();
-
-  const userId = await new Promise((resolve) => {
+  await new Promise((resolve) => {
     request.post({
       url: 'http://localhost:3000/api/v0/users',
       form: {
@@ -346,7 +384,7 @@ async function signUpAndLogIn(email = 'evan@example.com', password = 'asdfasdf')
     });
   });
 
-  return await new Promise((resolve) => {
+  return new Promise((resolve) => {
     request.post({
       url: 'http://localhost:3000/api/v0/user_access_tokens',
       auth: {

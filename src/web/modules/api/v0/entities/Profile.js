@@ -4,9 +4,11 @@
 class Profile {
   /**
    * @param  {Object} settings
+   * @param  {Number} settings.id
    * @param  {String} settings.username
    */
-  constructor({ username }) {
+  constructor({ id, username }) {
+    this.id = id;
     this.username = username;
   }
 }

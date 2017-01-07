@@ -3,18 +3,13 @@
  * @see http://sequelize.readthedocs.io/en/latest/api/instance/
  */
 
-import HttpStatuses from 'http-status-codes';
-
-import db from '../../../../../../db';
-import ApiError from '../../../../../../modules/errors/ApiError';
-import BaseError from '../../../../../../modules/errors/BaseError';
+import accessTokenAuth from '../../../../../../modules/authentication/accessToken';
 import apiErrorFactory from '../../../../../../modules/errors/factories/apiErrorFactory';
 import AuthorizationError from '../../../../../../modules/errors/AuthorizationError';
+import BaseError from '../../../../../../modules/errors/BaseError';
+import db from '../../../../../../db';
 import profilePublisher from '../../../../../../modules/publishers/profile';
 import profileRepository from '../../../../../../modules/users/profileRepository';
-import NotFoundError from '../../../../../../modules/errors/NotFoundError';
-import ValidationError from '../../../../../../modules/errors/ValidationError';
-import accessTokenAuth from '../../../../../../modules/authentication/accessToken';
 
 /**
  * Gets a {@link User}'s {@link Profile}.

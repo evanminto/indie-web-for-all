@@ -96,6 +96,16 @@ class RequestFactory {
   }
 
   /**
+   * @param {Number|String} id
+   * @return {Request}
+   */
+  getProfileLinksByProfileId(id) {
+    return new Request(this.generateUrl(`/api/v0/profiles/${id}/links`), {
+      method: 'GET',
+    });
+  }
+
+  /**
    * @return {Request}
    */
   getProfileLinks() {

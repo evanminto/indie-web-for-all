@@ -2,6 +2,7 @@
   <profile-page
     :username="username"
     :path="path"
+    :links="links"
   ></profile-page>
 </template>
 
@@ -23,6 +24,10 @@
       path() {
         return this.$store.state.profile.path;
       },
+
+      links() {
+        return this.$store.state.profile.links;
+      },
     },
 
     mounted() {
@@ -40,9 +45,12 @@
         throw { message: 'Route not found.' };
       }
 
+      const links = await apiClient.getProfileLinksByProfileId(profile.id);
+
       store.commit(PROFILE_SET, {
         username: profile.username,
         path: `/${profile.username}`,
+        links,
       });
     },
   };

@@ -56,7 +56,7 @@ function callRequestMethod(method, url) {
           response,
           body,
         });
-      }
+      },
     );
   });
 }

@@ -1,8 +1,10 @@
 import db from '../../../../db';
+import profilePublisher from '../../../../modules/publishers/profile';
 
 /**
  * Gets all profiles matching the provided filters and returns them in the response.
  *
+ * @memberOf ProfilesActions
  * @param  {external:Request}   request
  * @param  {external:Response}  response
  * @return {Promise}
@@ -22,13 +24,14 @@ export async function getProfiles(request, response) {
     profiles = [];
   }
 
-  response.json(profiles.map((profile) => {
-    return {
-      username: profile.username,
-    }
-  }));
-};
+  response.json(
+    profiles.map(profile => profilePublisher.publish(profile)),
+  );
+}
 
+/**
+ * @namespace ProfilesActions
+ */
 export default {
   getProfiles,
 };
