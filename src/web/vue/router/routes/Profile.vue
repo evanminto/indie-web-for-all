@@ -1,7 +1,7 @@
 <template>
   <profile-page
     :username="username"
-    :path="path"
+    :url="url"
     :links="links"
   ></profile-page>
 </template>
@@ -22,8 +22,8 @@
         return this.$store.state.profile.username;
       },
 
-      path() {
-        return this.$store.state.profile.path;
+      url() {
+        return this.$store.state.profile.url;
       },
 
       links() {
@@ -50,7 +50,7 @@
 
       store.commit(PROFILE_SET, {
         username: profile.username,
-        path: `/${profile.username}`,
+        url: `${config.baseUrl}/${profile.username}`,
         links,
       });
     },

@@ -1,11 +1,11 @@
 <template>
   <div class="h-card">
     <h1 class="p-name">
-      <router-link
+      <a
         class="u-url"
         rel="me"
-        :to="path"
-      >{{ username }}</router-link>
+        :href="url"
+      >{{ username }}</a>
     </h1>
 
     <ul>
@@ -20,7 +20,7 @@
   export default {
     props: [
       'username',
-      'path',
+      'url',
       'links',
     ],
   };

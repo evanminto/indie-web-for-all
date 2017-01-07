@@ -8,14 +8,14 @@ import { PROFILE_SET } from '../mutationTypes';
 export default {
   state: {
     username: '',
-    path: '',
+    url: '',
     links: [],
   },
 
   mutations: {
-    [PROFILE_SET](state, { username, path, links }) {
+    [PROFILE_SET](state, { username, url, links }) {
       state.username = username;
-      state.path = path;
+      state.url = url;
       state.links = links;
     },
   },
