@@ -1,7 +1,7 @@
 import requestFacade from '../../../requestFacade';
 import start from '../../../server';
 
-describe('/:username', () => {
+describe('/:username/outbox', () => {
   let server;
 
   beforeEach(async () => {
@@ -22,7 +22,7 @@ describe('/:username', () => {
       await setUsername(userId, token, 'vamptvo');
 
       const result = await requestFacade.get({
-        url: 'http://localhost:3000/vamptvo',
+        url: 'http://localhost:3000/vamptvo/outbox',
         headers: {
           Accept: 'application/ld+json; profile="https://www.w3.org/ns/activitystreams#"',
         },
@@ -33,13 +33,20 @@ describe('/:username', () => {
       body = result.body;
     });
 
-    it('returns a profile', () => {
+    it('returns an empty outbox', () => {
       expect(error).toBeFalsy();
       expect(response.statusCode).toEqual(200);
 
       const data = JSON.parse(body);
-      expect(data.name).toEqual('vamptvo');
-      expect(data.id).toEqual('http://localhost:3000/vamptvo');
+      expect(data.id).toBe('http://localhost:3000/vamptvo/outbox');
+      expect(data.name).toBe("vamptvo's Outbox");
+      expect(data.summary).toBeDefined();
+      expect(data.type).toBe('OrderedCollection');
+      expect(data.totalItems).toBe(0);
+      expect(data.orderedItems).toEqual([]);
+      expect(data.first).toBeDefined();
+      expect(data.last).toBeDefined();
+      expect(data.current).toBeDefined();
     });
   });
 });

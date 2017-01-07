@@ -10,9 +10,10 @@ class ActivityStreamsPublisher {
    */
   publishProfile(profile) {
     return Object.assign({}, getBaseObject(), {
-      "type": "Person",
-      "id": `${config.baseUrl}/${profile.username}`,
-      "name": profile.username,
+      type: 'Person',
+      id: `${config.baseUrl}/${profile.username}`,
+      name: profile.username,
+      outbox: `${config.baseUrl}/${profile.username}/outbox`,
     });
   }
 }
@@ -22,7 +23,7 @@ class ActivityStreamsPublisher {
  */
 function getBaseObject() {
   return {
-    "@context": "https://www.w3.org/ns/activitystreams",
+    '@context': 'https://www.w3.org/ns/activitystreams',
   };
 }
 
