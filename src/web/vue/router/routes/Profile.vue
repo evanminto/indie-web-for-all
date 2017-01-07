@@ -7,6 +7,7 @@
 </template>
 
 <script>
+  import config from '../../../../../config/client';
   import apiClient from '../../../modules/api/v0/client';
   import ProfilePageComponent from '../../components/ProfilePage.vue';
   import { PROFILE_SET } from '../../store/mutationTypes';
@@ -63,6 +64,10 @@
         {
           rel: 'token_endpoint',
           href: 'https://tokens.indieauth.com/token',
+        },
+        {
+          rel: 'micropub',
+          href: `${config.baseUrl}/micropub`,
         },
       ],
     },
