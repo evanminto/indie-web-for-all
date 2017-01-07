@@ -40,8 +40,12 @@ router.get('/*', async (request, response) => {
         console.log('Error:', error);
       }
 
+      const htmlHead = getHtmlHeadFromMatchedComponents(vueApp);
+
       const html = baseTemplate({
         app: vueHtml,
+        links: htmlHead.links,
+        metas: htmlHead.metas,
       });
 
       response
@@ -67,6 +71,31 @@ async function preFetchMatchedComponents(app) {
       await component.preFetch(app.$store);
     }
   }));
+}
+
+/**
+ * @param  {Vue} app
+ * @return {Object}
+ */
+function getHtmlHeadFromMatchedComponents(app) {
+  const matchedComponents = app.$router.getMatchedComponents();
+
+  return matchedComponents.reduce((result, component) => {
+    if (component.htmlHead) {
+      if (component.htmlHead.links) {
+        result.links = result.links.concat(component.htmlHead.links);
+      }
+
+      if (component.htmlHead.metas) {
+        result.metas = result.metas.concat(component.htmlHead.metas);
+      }
+    }
+
+    return result;
+  }, {
+    links: [],
+    metas: [],
+  });
 }
 
 export default router;

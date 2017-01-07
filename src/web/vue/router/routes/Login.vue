@@ -16,6 +16,6 @@
     components: {
       'app-base': AppBaseComponent,
       'login-form': LoginFormComponent,
-    }
+    },
   };
 </script>

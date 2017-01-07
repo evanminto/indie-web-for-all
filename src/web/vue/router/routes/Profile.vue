@@ -53,5 +53,18 @@
         links,
       });
     },
+
+    htmlHead: {
+      links: [
+        {
+          rel: 'authorization_endpoint',
+          href: 'https://indieauth.com/auth',
+        },
+        {
+          rel: 'token_endpoint',
+          href: 'https://tokens.indieauth.com/token',
+        },
+      ],
+    },
   };
 </script>
