@@ -18,7 +18,11 @@ router.use(social);
 router.get('/*', async (request, response) => {
   const acceptHeader = request.get('Accept');
 
-  if (!acceptHeader || acceptHeader.includes('text/html')) {
+  if (
+      !acceptHeader ||
+      acceptHeader.includes('*/*') ||
+      acceptHeader.includes('text/html')
+    ) {
     if (request.cookies.user_access_token) {
       userAuthentication.continueSession(request.cookies.user_access_token);
     }
