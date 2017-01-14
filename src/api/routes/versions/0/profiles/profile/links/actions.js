@@ -13,7 +13,7 @@ import NotFoundError from '../../../../../../modules/errors/NotFoundError';
  */
 export async function getLinks(request, response) {
   try {
-    const profile = await db.Profile.findById(request.params.id);
+    const profile = await db.Profile.findById(request.params.profileId);
 
     if (!profile) {
       throw new NotFoundError('Profile not found.');

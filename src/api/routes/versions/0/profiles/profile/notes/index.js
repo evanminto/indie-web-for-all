@@ -1,11 +1,13 @@
 import express from 'express';
 
-import { createContent } from './actions';
+import { createNote, getNotes } from './actions';
 
 const router = express.Router({
   mergeParams: true,
 });
 
-router.post('/', createContent);
+router.route('/')
+  .get(getNotes)
+  .post(createNote);
 
 export default router;

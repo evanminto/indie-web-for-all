@@ -3,6 +3,7 @@
     :username="username"
     :url="url"
     :links="links"
+    :notes="notes"
   ></profile-page>
 </template>
 
@@ -13,6 +14,8 @@
   import { PROFILE_SET } from '../../store/mutationTypes';
 
   export default {
+    name: 'profile-route',
+
     components: {
       'profile-page': ProfilePageComponent,
     },
@@ -28,6 +31,10 @@
 
       links() {
         return this.$store.state.profile.links;
+      },
+
+      notes() {
+        return this.$store.state.profile.notes;
       },
     },
 
@@ -47,11 +54,13 @@
       }
 
       const links = await apiClient.getProfileLinksByProfileId(profile.id);
+      const notes = await apiClient.getNotesByProfileId(profile.id);
 
       store.commit(PROFILE_SET, {
         username: profile.username,
         url: `${config.baseUrl}/${profile.username}`,
         links,
+        notes,
       });
     },
 

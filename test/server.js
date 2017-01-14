@@ -19,4 +19,4 @@ export default async function start(force = false) {
 
   // Start the application.
   return expressApp.listen(config.port);
-};
+}

@@ -1,3 +1,4 @@
+import Note from './entities/Note';
 import Profile from './entities/Profile';
 import ProfileLink from './entities/ProfileLink';
 import requestFactory from './requestFactory';
@@ -31,7 +32,7 @@ class ApiClient {
   /**
    * Finds the public links for a profile
    *
-   * @param  {String} id
+   * @param  {Number} id
    * @return {Promise.<ProfileLink[]>}
    */
   async getProfileLinksByProfileId(id) {
@@ -42,6 +43,39 @@ class ApiClient {
       const links = await response.json();
 
       return links.map(link => new ProfileLink(link));
+    }
+
+    return [];
+  }
+
+  /**
+   * Creates a new note for a profile.
+   *
+   * @param  {Number} profileId
+   * @param  {Object} data      see {@link RequestFactory#createNote}
+   * @return {Note|null}
+   */
+  async createNote(profileId, data) {
+    const request = requestFactory.createNote(profileId, data);
+    const response = await fetch(request);
+
+    if (response.ok) {
+      const note = await response.json();
+
+      return new Note(note);
+    }
+
+    return null;
+  }
+
+  async getNotesByProfileId(profileId) {
+    const request = requestFactory.getNotesByProfileId(profileId);
+    const response = await fetch(request);
+
+    if (response.ok) {
+      const notes = await response.json();
+
+      return notes.map(note => new Note(note));
     }
 
     return [];

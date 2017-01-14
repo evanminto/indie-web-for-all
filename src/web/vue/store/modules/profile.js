@@ -10,13 +10,15 @@ export default {
     username: '',
     url: '',
     links: [],
+    notes: [],
   },
 
   mutations: {
-    [PROFILE_SET](state, { username, url, links }) {
+    [PROFILE_SET](state, { username, url, links, notes }) {
       state.username = username;
       state.url = url;
       state.links = links;
+      state.notes = notes;
     },
   },
 };

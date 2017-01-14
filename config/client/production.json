@@ -1,3 +1,7 @@
 {
-  "baseUrl": "https://indie-web-for-all.herokuapp.com"
+  "baseUrl": "https://indie-web-for-all.herokuapp.com",
+  "micropub": {
+    "authorizationEndpoint": "https://indieauth.com/auth",
+    "tokenEndpoint": "https://tokens.indieauth.com/token"
+  }
 }

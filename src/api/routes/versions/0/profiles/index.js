@@ -8,6 +8,6 @@ const router = express.Router({
 });
 
 router.get('/', getProfiles);
-router.use('/:id', profileRouter);
+router.use('/:profileId', profileRouter);
 
 export default router;

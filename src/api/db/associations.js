@@ -1,4 +1,4 @@
-import db from './db';
+import Note from './models/Note';
 import Profile from './models/Profile';
 import ProfileLink from './models/ProfileLink';
 import User from './models/User';
@@ -27,3 +27,6 @@ User.hasOne(Profile);
 
 ProfileLink.belongsTo(Profile, { as: 'profile' });
 Profile.hasMany(ProfileLink, { as: 'links' });
+
+Note.belongsTo(Profile, { as: 'profile' });
+Profile.hasMany(Note, { as: 'notes' });

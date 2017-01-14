@@ -1,7 +1,15 @@
 import 'isomorphic-fetch';
+import FormDataPolyfill from 'form-data';
 
 import config from '../../../../../config/client';
 import currentSession from '../../currentSession';
+
+// Polyfill FormData in Node env
+let FormData = (global || window).FormData || null;
+
+if (!FormData) {
+  FormData = FormDataPolyfill;
+}
 
 /**
  * Generates Requests for the REST API.
@@ -18,23 +26,9 @@ class RequestFactory {
    * @return {Request}
    */
   createUser(data) {
-    let body;
-
-    if (data instanceof FormData) {
-      body = data;
-    } else {
-      body = new FormData();
-
-      for (let prop in data) {
-        if (data.hasOwnProperty(prop)) {
-          body.append(prop, data[prop]);
-        }
-      }
-    }
-
     return new Request(this.generateUrl('/api/v0/users'), {
       method: 'POST',
-      body: body,
+      body: getBody(data),
     });
   }
 
@@ -43,9 +37,7 @@ class RequestFactory {
    * @return {Request}
    */
   getUserById(id) {
-    return new Request(this.generateUrl(`/api/v0/users/${id}`), {
-      method: 'GET',
-    });
+    return this.get(`/api/v0/users/${id}`);
   }
 
   /**
@@ -70,9 +62,7 @@ class RequestFactory {
    * @return {Request}
    */
   getUserAccessToken(token) {
-    return new Request(this.generateUrl(`/api/v0/user_access_tokens/${token}`), {
-      method: 'GET',
-    });
+    return this.get(`/api/v0/user_access_tokens/${token}`);
   }
 
   /**
@@ -80,9 +70,7 @@ class RequestFactory {
    * @return {Request}
    */
   getProfileByUserId(userId) {
-    return new Request(this.generateUrl(`/api/v0/users/${userId}/profile`), {
-      method: 'GET',
-    });
+    return this.get(`/api/v0/users/${userId}/profile`);
   }
 
   /**
@@ -90,9 +78,7 @@ class RequestFactory {
    * @return {Request}
    */
   getProfilesByUsername(username) {
-    return new Request(this.generateUrl(`/api/v0/profiles?username=${username}`), {
-      method: 'GET',
-    });
+    return this.get(`/api/v0/profiles?username=${username}`);
   }
 
   /**
@@ -100,18 +86,14 @@ class RequestFactory {
    * @return {Request}
    */
   getProfileLinksByProfileId(id) {
-    return new Request(this.generateUrl(`/api/v0/profiles/${id}/links`), {
-      method: 'GET',
-    });
+    return this.get(`/api/v0/profiles/${id}/links`);
   }
 
   /**
    * @return {Request}
    */
   getProfileLinks() {
-    return new Request(this.generateUrl(`/api/v0/users/${currentSession.userId}/profile/links`), {
-      method: 'GET',
-    });
+    return this.get(`/api/v0/users/${currentSession.userId}/profile/links`);
   }
 
   /**
@@ -119,27 +101,7 @@ class RequestFactory {
    * @return {Request}
    */
   updateProfile(data) {
-    let body;
-
-    if (data instanceof FormData) {
-      body = data;
-    } else {
-      body = new FormData();
-
-      for (let prop in data) {
-        if (data.hasOwnProperty(prop)) {
-          body.append(prop, data[prop]);
-        }
-      }
-    }
-
-    return new Request(this.generateUrl(`/api/v0/users/${currentSession.userId}/profile`), {
-      method: 'PATCH',
-      body: body,
-      headers: {
-        'Authorization': `Bearer ${currentSession.userAccessToken}`,
-      }
-    });
+    return this.authenticatedPatch(`/api/v0/users/${currentSession.userId}/profile`, data);
   }
 
   /**
@@ -147,27 +109,25 @@ class RequestFactory {
    * @return {Request}
    */
   addProfileLink(data) {
-    let body;
+    return this.authenticatedPost(`/api/v0/users/${currentSession.userId}/profile/links`, data);
+  }
 
-    if (data instanceof FormData) {
-      body = data;
-    } else {
-      body = new FormData();
+  /**
+   * @param  {Number} profileId
+   * @param  {Object} data
+   * @param  {String} data.content
+   * @return {Request}
+   */
+  createNote(profileId, data) {
+    return this.authenticatedPost(`/api/v0/profiles/${profileId}/notes`, data);
+  }
 
-      for (let prop in data) {
-        if (data.hasOwnProperty(prop)) {
-          body.append(prop, data[prop]);
-        }
-      }
-    }
-
-    return new Request(this.generateUrl(`/api/v0/users/${currentSession.userId}/profile/links`), {
-      method: 'POST',
-      body: body,
-      headers: {
-        'Authorization': `Bearer ${currentSession.userAccessToken}`,
-      }
-    });
+  /**
+   * @param  {Number} profileId
+   * @return {Request}
+   */
+  getNotesByProfileId(profileId) {
+    return this.get(`/api/v0/profiles/${profileId}/notes`);
   }
 
   /**
@@ -180,6 +140,68 @@ class RequestFactory {
   generateUrl(path) {
     return this.baseUrl + path;
   }
+
+  /**
+   * Generate an unauthenticated GET request
+   *
+   * @param  {String} path
+   * @return {Request}
+   */
+  get(path) {
+    return new Request(this.generateUrl(path), {
+      method: 'GET',
+    });
+  }
+
+  /**
+   * Generate a POST request with user auth.
+   *
+   * @param  {String} path
+   * @param  {Object} data
+   * @return {Request}
+   */
+  authenticatedPost(path, data) {
+    return new Request(this.generateUrl(path), {
+      body: getBody(data),
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${currentSession.userAccessToken}`,
+      },
+    });
+  }
+
+  /**
+   * Generate a PATCH request with user auth.
+   *
+   * @param  {String} path
+   * @param  {Object} data
+   * @return {Request}
+   */
+  authenticatedPatch(path, data) {
+    return new Request(this.generateUrl(path), {
+      body: getBody(data),
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${currentSession.userAccessToken}`,
+      },
+    });
+  }
+}
+
+function getBody(data) {
+  let body;
+
+  if (data instanceof FormData) {
+    body = data;
+  } else {
+    body = new FormData();
+
+    Object.keys(data).forEach((key) => {
+      body.append(key, data[key]);
+    });
+  }
+
+  return body;
 }
 
 export default new RequestFactory();
