@@ -1,26 +1,49 @@
-/**
- * @external Instance
- * @see http://sequelize.readthedocs.io/en/latest/api/instance/
- */
+import accessTokenAuth from '../../../modules/authentication/accessToken';
+import apiErrorFactory from '../../../modules/errors/factories/apiErrorFactory';
+import AuthorizationError from '../../../modules/errors/AuthorizationError';
+import BaseError from '../../../modules/errors/BaseError';
+import db from '../../../db';
+import profilePublisher from '../../../modules/publishers/profile';
+import profileRepository from '../../../modules/users/profileRepository';
 
-import accessTokenAuth from '../../../../../../modules/authentication/accessToken';
-import apiErrorFactory from '../../../../../../modules/errors/factories/apiErrorFactory';
-import AuthorizationError from '../../../../../../modules/errors/AuthorizationError';
-import BaseError from '../../../../../../modules/errors/BaseError';
-import db from '../../../../../../db';
-import profilePublisher from '../../../../../../modules/publishers/profile';
-import profileRepository from '../../../../../../modules/users/profileRepository';
+/**
+ * Gets all profiles matching the provided filters and returns them in the response.
+ *
+ * @memberOf ProfileController
+ * @param  {external:Request}   request
+ * @param  {external:Response}  response
+ * @return {Promise}
+ */
+export async function getProfiles(request, response) {
+  let profiles = [];
+
+  if (request.query.username) {
+    profiles = await db.Profile.findAll({
+      where: {
+        username: request.query.username,
+      },
+    });
+  }
+
+  if (!profiles) {
+    profiles = [];
+  }
+
+  response.json(
+    profiles.map(profile => profilePublisher.publish(profile)),
+  );
+}
 
 /**
  * Gets a {@link User}'s {@link Profile}.
  *
- * @memberOf ProfileActions
+ * @memberOf ProfileController
  * @function getProfile
  * @param  {external:Request}   request
  * @param  {external:Response}  response
  * @return {Promise}
  */
-export async function getProfile(request, response) {
+export async function getProfileByUserId(request, response) {
   try {
     const profile = await profileRepository.getByUserId(request.params.id);
     const publishedProfile = profilePublisher.publish(profile);
@@ -43,13 +66,13 @@ export async function getProfile(request, response) {
 /**
  * Updates a {@link User}'s {@link Profile}.
  *
- * @memberOf ProfileActions
+ * @memberOf ProfileController
  * @function updateProfile
  * @param  {external:Request}   request
  * @param  {external:Response}  response
  * @return {Promise}
  */
-export async function updateProfile(request, response) {
+export async function updateProfileByUserId(request, response) {
   try {
     const currentUser = await accessTokenAuth(request, response);
     const user = await db.User.findById(request.params.id);
@@ -99,9 +122,10 @@ function usersMatch(user1, user2) {
 }
 
 /**
- * @namespace ProfileActions
+ * @namespace ProfileController
  */
 export default {
-  getProfile,
-  updateProfile,
+  getProfiles,
+  getProfileByUserId,
+  updateProfileByUserId,
 };

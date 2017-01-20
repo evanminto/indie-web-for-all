@@ -1,7 +1,7 @@
 import request from 'request';
 import HttpStatuses from 'http-status-codes';
 
-import start from '../../../server';
+import start from '../../../../server';
 
 let server;
 

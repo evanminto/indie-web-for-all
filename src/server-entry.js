@@ -22,7 +22,7 @@ const expressApp = express();
 expressApp.use(cookieParser());
 
 expressApp.use('/assets', express.static('app/client'));
-expressApp.use('/api', api);
+expressApp.use(api);
 expressApp.use(web);
 
 // Start the application.

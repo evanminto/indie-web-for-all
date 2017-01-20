@@ -1,16 +1,11 @@
-import express from 'express';
 import HttpStatuses from 'http-status-codes';
 
-import ApiError from '../../../../modules/errors/ApiError';
-import NotFoundError from '../../../../modules/errors/NotFoundError';
-import basicAuth from '../../../../modules/authentication/basic';
-import accessTokenRepository from '../../../../modules/users/accessTokenRepository';
+import ApiError from '../../../modules/errors/ApiError';
+import NotFoundError from '../../../modules/errors/NotFoundError';
+import basicAuth from '../../../modules/authentication/basic';
+import accessTokenRepository from '../../../modules/users/accessTokenRepository';
 
-const router = express.Router({
-  mergeParams: true,
-});
-
-router.post('/', async (request, response) => {
+export async function createToken(request, response) {
   let user;
   let token;
 
@@ -40,9 +35,9 @@ router.post('/', async (request, response) => {
       .status(apiError.statusCode)
       .json(apiError.json);
   }
-});
+}
 
-router.get('/:token', async (request, response) => {
+export async function getToken(request, response) {
   let token;
   let user;
 
@@ -73,6 +68,12 @@ router.get('/:token', async (request, response) => {
       .status(apiError.statusCode)
       .json(apiError.json);
   }
-});
+}
 
-export default router;
+/**
+ * @namespace UserAccessTokenController
+ */
+export default {
+  createToken,
+  getToken,
+};

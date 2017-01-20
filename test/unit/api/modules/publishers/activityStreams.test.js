@@ -5,7 +5,7 @@ const mockConfig = {
 jest.mock('../../../../../config/client', () => mockConfig);
 
 const activityStreamsPublisher = require(
-  '../../../../../src/web/modules/publishers/activityStreams'
+  '../../../../../src/api/modules/publishers/activityStreams',
 ).default;
 
 describe('ActivityStreamsPublisher', () => {

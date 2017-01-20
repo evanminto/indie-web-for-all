@@ -1,5 +1,5 @@
 import activityStreamsPublisher from '../../modules/publishers/activityStreams';
-import apiClient from '../../modules/api/v0/client';
+import db from '../../db';
 
 /**
  * Gets a user profile and returns it in the response.
@@ -16,7 +16,11 @@ export async function getProfile(request, response, next) {
     acceptHeader.includes('application/ld+json; profile="https://www.w3.org/ns/activitystreams#"') ||
     acceptHeader.includes('application/activity+json')
   ) {
-    const profile = await apiClient.getProfileByUsername(request.params.username);
+    const profile = await db.Profile.findOne({
+      where: {
+        username: request.params.username,
+      },
+    });
 
     if (profile) {
       response.json(

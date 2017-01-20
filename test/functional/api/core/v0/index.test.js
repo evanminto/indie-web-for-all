@@ -1,5 +1,5 @@
 import request from 'request';
-import start from '../../../server';
+import start from '../../../../server';
 
 describe('API v0', () => {
   describe('GET /', () => {

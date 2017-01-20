@@ -1,7 +1,7 @@
 import request from 'request';
 
-import requestFacade from '../../../requestFacade';
-import start from '../../../server';
+import requestFacade from '../../../../requestFacade';
+import start from '../../../../server';
 
 describe('API v0', () => {
   let userId;
