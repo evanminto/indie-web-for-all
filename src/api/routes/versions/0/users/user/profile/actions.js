@@ -52,20 +52,18 @@ export async function getProfile(request, response) {
 export async function updateProfile(request, response) {
   try {
     const currentUser = await accessTokenAuth(request, response);
+    const user = await db.User.findById(request.params.id);
 
-    const profile = await db.sequelize.transaction(async (transaction) => {
-      const userModel = await db.User.findById(request.params.id);
+    if (!usersMatch(currentUser.model, user)) {
+      throw new AuthorizationError("User doesn't match.");
+    }
 
-      if (!usersMatch(currentUser.model, userModel)) {
-        throw new AuthorizationError("User doesn't match.");
-      }
+    const profile = await user.getProfile();
 
-      const profileModel = await getOrCreateProfileForUser(userModel);
+    profile.username = request.body.username;
 
-      profileModel.username = request.body.username;
-      await profileModel.save({transaction});
-
-      return profileModel;
+    await db.sequelize.transaction(async (transaction) => {
+      await profile.save({ transaction });
     });
 
     const publishedProfile = await profilePublisher.publish(profile);
@@ -80,7 +78,8 @@ export async function updateProfile(request, response) {
       apiError = apiErrorFactory.createFromMessage(error);
     }
 
-    response.status(apiError.statusCode)
+    response
+      .status(apiError.statusCode)
       .json(apiError.json);
   }
 }
@@ -98,26 +97,6 @@ function usersMatch(user1, user2) {
 
   return true;
 }
-
-/**
- * @param  {external:Instance} user
- * @return {external:Instance} the user's existing profile, or a new one
- * @private
- */
-async function getOrCreateProfileForUser(user) {
-  const profileModel = await user.getProfile();
-
-  if (!profileModel) {
-    const newProfile = db.Profile.build();
-
-    newProfile.setUser(user, {transaction, save: false})
-
-    return newProfile;
-  }
-
-  return profileModel;
-}
-
 
 /**
  * @namespace ProfileActions

@@ -1,10 +1,10 @@
-import activityStreamsPublisher from '../../../modules/publishers/activityStreams';
-import apiClient from '../../../modules/api/v0/client';
+import activityStreamsPublisher from '../../modules/publishers/activityStreams';
+import apiClient from '../../modules/api/v0/client';
 
 /**
  * Gets a user profile and returns it in the response.
  *
- * @memberOf SocialIndexActions
+ * @memberOf ProfileController
  * @param  {external:Request}  request
  * @param  {external:Response} response
  */
@@ -33,7 +33,7 @@ export async function getProfile(request, response, next) {
 /**
  * Actions for use at the top level of the Social API.
  *
- * @namespace SocialIndexActions
+ * @namespace ProfileController
  */
 export default {
   getProfile,

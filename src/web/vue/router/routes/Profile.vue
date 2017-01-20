@@ -54,13 +54,11 @@
       }
 
       const links = await apiClient.getProfileLinksByProfileId(profile.id);
-      const notes = await apiClient.getNotesByProfileId(profile.id);
 
       store.commit(PROFILE_SET, {
         username: profile.username,
         url: `${config.baseUrl}/${profile.username}`,
         links,
-        notes,
       });
     },
 

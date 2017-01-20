@@ -1,7 +1,7 @@
 import express from 'express';
 
 import baseTemplate from './templates/base.hbs';
-import social from './social';
+import socialRouter from './social';
 import userAuthentication from './modules/userAuthentication';
 import vueApp from './vue';
 
@@ -13,7 +13,7 @@ const router = express.Router({
   mergeParams: true,
 });
 
-router.use(social);
+router.use(socialRouter);
 
 router.get('/*', async (request, response) => {
   const acceptHeader = request.get('Accept');

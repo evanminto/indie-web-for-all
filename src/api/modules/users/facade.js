@@ -1,55 +1,55 @@
 import db from '../../db';
 import AccessToken from './AccessToken';
-import NotFoundError from '../errors/NotFoundError';
-import ValidationError from '../errors/ValidationError';
 
 class Facade {
-  signUp({ email, password }) {
+  async signUp({ email, password }) {
     let newUser;
 
-    return db.sequelize.transaction((t) => {
-      return db.User.create({}, {
-        transaction: t,
-      })
-        .then((user) => {
-          newUser = user;
+    try {
+      return db.sequelize.transaction(async (transaction) => {
+        const user = await db.User.create({}, {
+          transaction,
+        });
 
-          return user.createAccount({
-            email: email,
-          }, {
-            transaction: t,
-          });
-        })
-        .then((account) => {
-          return account.createCredentials({
-            password: password,
-          }, {
-            transaction: t,
-          });
-        })
-        .then(() => {
-          return newUser.createProfile({}, {
-            transaction: t,
-          });
-        })
-        .then(() => {
-          return newUser.createAccessToken({
-            value: 'asdf',
-          }, {
-            transaction: t,
-          });
-        })
-        .then((tokenModel) => {
-          const token = new AccessToken(tokenModel);
+        const account = await user.createAccount({
+          email,
+        }, {
+          transaction,
+        });
 
-          token.refresh();
+        await account.createCredentials({
+          password,
+        }, {
+          transaction,
+        });
 
-          return token.save({
-            transaction: t,
-          });
-        })
-        .then(() => newUser);
-    });
+        const profile = await user.createProfile({}, {
+          transaction,
+        });
+
+        await profile.createActor({}, {
+          transaction,
+        });
+
+        const tokenModel = await user.createAccessToken({
+          value: 'asdf',
+        }, {
+          transaction,
+        });
+
+        const token = new AccessToken(tokenModel);
+
+        token.refresh();
+
+        await token.save({
+          transaction,
+        });
+
+        return user;
+      });
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
 

@@ -47,39 +47,6 @@ class ApiClient {
 
     return [];
   }
-
-  /**
-   * Creates a new note for a profile.
-   *
-   * @param  {Number} profileId
-   * @param  {Object} data      see {@link RequestFactory#createNote}
-   * @return {Note|null}
-   */
-  async createNote(profileId, data) {
-    const request = requestFactory.createNote(profileId, data);
-    const response = await fetch(request);
-
-    if (response.ok) {
-      const note = await response.json();
-
-      return new Note(note);
-    }
-
-    return null;
-  }
-
-  async getNotesByProfileId(profileId) {
-    const request = requestFactory.getNotesByProfileId(profileId);
-    const response = await fetch(request);
-
-    if (response.ok) {
-      const notes = await response.json();
-
-      return notes.map(note => new Note(note));
-    }
-
-    return [];
-  }
 }
 
 export default new ApiClient();

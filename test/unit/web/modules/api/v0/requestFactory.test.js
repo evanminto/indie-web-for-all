@@ -152,35 +152,4 @@ describe('API v0 Request Factory', () => {
       });
     });
   });
-
-  describe('createNote()', () => {
-    const profileId = 1234;
-    const note = {
-      content: 'Lorem Ipsum',
-    };
-
-    const request = apiRequestFactory.createNote(profileId, note);
-
-    it('sets a URL', () => {
-      expect(request.url).toEqual(`${config.baseUrl}/api/v0/profiles/1234/notes`);
-    });
-
-    it('sets POST as method', () => {
-      expect(request.method).toEqual('POST');
-    });
-  });
-
-  describe('getNotesByProfileId()', () => {
-    const profileId = 1234;
-
-    const request = apiRequestFactory.getNotesByProfileId(profileId);
-
-    it('sets a URL', () => {
-      expect(request.url).toEqual(`${config.baseUrl}/api/v0/profiles/1234/notes`);
-    });
-
-    it('sets GET as method', () => {
-      expect(request.method).toEqual('GET');
-    });
-  });
 });

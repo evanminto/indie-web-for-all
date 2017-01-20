@@ -44,9 +44,6 @@ describe('/:username/outbox', () => {
       expect(data.type).toBe('OrderedCollection');
       expect(data.totalItems).toBe(0);
       expect(data.orderedItems).toEqual([]);
-      expect(data.first).toBeDefined();
-      expect(data.last).toBeDefined();
-      expect(data.current).toBeDefined();
     });
   });
 });

@@ -113,24 +113,6 @@ class RequestFactory {
   }
 
   /**
-   * @param  {Number} profileId
-   * @param  {Object} data
-   * @param  {String} data.content
-   * @return {Request}
-   */
-  createNote(profileId, data) {
-    return this.authenticatedPost(`/api/v0/profiles/${profileId}/notes`, data);
-  }
-
-  /**
-   * @param  {Number} profileId
-   * @return {Request}
-   */
-  getNotesByProfileId(profileId) {
-    return this.get(`/api/v0/profiles/${profileId}/notes`);
-  }
-
-  /**
    * Takes an API route and generates a full API URL using the base URL.
    *
    * @param  {String} path

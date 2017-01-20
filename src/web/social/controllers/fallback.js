@@ -1,7 +1,7 @@
 /**
  * Handles requests that don't match any explicit routes.
  *
- * @memberOf SocialIndexActions
+ * @memberOf FallbackController
  * @param  {external:Request}   request
  * @param  {external:Response}  response
  * @param  {Function}           next
@@ -27,7 +27,7 @@ export function fallback(request, response, next) {
 /**
  * Actions for use at the top level of the Social API.
  *
- * @namespace SocialIndexActions
+ * @namespace FallbackController
  */
 export default {
   fallback,
