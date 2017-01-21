@@ -1,8 +1,15 @@
 import express from 'express';
 
-import api from '../src/api';
-import config from '../config/server';
-import db from '../src/api/db';
+const mockTemplate = jest.fn();
+mockTemplate.mockImplementation(() => '');
+
+jest.mock('../src/web/templates/baseSync.hbs', () => mockTemplate);
+jest.mock('../src/web/templates/note.hbs', () => mockTemplate);
+jest.mock('../src/web/templates/profile.hbs', () => mockTemplate);
+
+const api = require('../src/api').default;
+const config = require('../config/server');
+const db = require('../src/api/db').default;
 
 const expressApp = express();
 

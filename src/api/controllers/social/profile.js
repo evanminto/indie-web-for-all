@@ -1,5 +1,11 @@
+import accepts from 'accepts';
+
 import activityStreamsPublisher from '../../modules/publishers/activityStreams';
+import config from '../../../../config/server';
 import db from '../../db';
+import baseSyncTemplate from '../../../web/templates/baseSync.hbs';
+import profileTemplate from '../../../web/templates/profile.hbs';
+import { ACTIVITY_JSON, ACTIVITY_STREAMS, HTML } from '../../modules/mimeTypes';
 
 /**
  * Gets a user profile and returns it in the response.
@@ -9,29 +15,77 @@ import db from '../../db';
  * @param  {external:Response} response
  */
 export async function getProfile(request, response, next) {
-  const acceptHeader = request.get('Accept');
+  let profile;
 
-  if (
-    !acceptHeader ||
-    acceptHeader.includes('application/ld+json; profile="https://www.w3.org/ns/activitystreams#"') ||
-    acceptHeader.includes('application/activity+json')
-  ) {
-    const profile = await db.Profile.findOne({
+  try {
+    profile = await db.Profile.findOne({
       where: {
         username: request.params.username,
       },
     });
-
-    if (profile) {
-      response.json(
-        activityStreamsPublisher.publishProfile(profile),
-      );
-    } else {
-      next();
-    }
-  } else {
-    next();
+  } catch (error) {
+    next('route');
   }
+
+  if (!profile) {
+    next('route');
+  }
+
+  let links;
+
+  switch (accepts(request).type([
+    HTML,
+    ACTIVITY_JSON,
+    ACTIVITY_STREAMS,
+  ])) {
+    case ACTIVITY_JSON:
+    case ACTIVITY_STREAMS:
+      return respondAS(response, profile);
+
+    case HTML:
+    default:
+      try {
+        links = await profile.getLinks();
+      } catch (error) {
+        // Do nothing.
+      }
+
+      return respondHTML(response, profile, links);
+  }
+}
+
+function respondAS(response, profile) {
+  response.json(
+    activityStreamsPublisher.publishProfile(profile),
+  );
+}
+
+function respondHTML(response, profile, links) {
+  const html = baseSyncTemplate({
+    links: [
+      {
+        rel: 'authorization_endpoint',
+        href: 'https://indieauth.com/auth',
+      },
+      {
+        rel: 'token_endpoint',
+        href: 'https://tokens.indieauth.com/token',
+      },
+      {
+        rel: 'micropub',
+        href: `${config.baseUrl}/${profile.username}/micropub`,
+      },
+    ],
+
+    body: profileTemplate({
+      profile,
+      links,
+    }),
+  });
+
+  response
+    .set('Content-Type', HTML)
+    .send(html);
 }
 
 /**

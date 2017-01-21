@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Indie Web for All</title>
+
+    {{#if metas}}
+      {{#each metas}}
+        <meta
+          {{#if name}}name="{{name}}"{{/if}}
+          {{#if content}}content="{{content}}"{{/if}}
+        >
+      {{/each}}
+    {{/if}}
+
+    {{#if links}}
+      {{#each links}}
+        <link
+          {{#if rel}}rel="{{rel}}"{{/if}}
+          {{#if href}}href="{{href}}"{{/if}}
+        >
+      {{/each}}
+    {{/if}}
+  </head>
+
+  <body>
+    {{{body}}}
+  </body>
+</html>

@@ -5,7 +5,6 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import multer from 'multer';
 
-import AcceptHeader from './middleware/AcceptHeaderRequirements';
 import {
   addLink,
   getLinks,
@@ -69,9 +68,9 @@ router.all('/api/*', (request, response) => {
 
 router.get('/:username', getProfile);
 router.use('/:username/micropub', createViaMicropub);
-router.get('/:username/outbox', AcceptHeader.activityStreams, getOutbox);
-router.get('/:username/activities/:activityId', AcceptHeader.activityStreams, getActivity);
-router.get('/:username/notes/:noteId', AcceptHeader.activityStreams, getNote);
+router.get('/:username/outbox', getOutbox);
+router.get('/:username/activities/:activityId', getActivity);
+router.get('/:username/notes/:noteId', getNote);
 
 if (process.env.NODE_ENV !== 'production') {
   router.route('/token_dev')

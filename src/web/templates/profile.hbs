@@ -1,0 +1,19 @@
+<div class="h-feed">
+  <div class="p-author h-card">
+    <h1 class="p-name">
+      <a
+        class="u-url"
+        rel="me"
+        href="/{{profile.username}}"
+      >{{profile.username}}</a>
+    </h1>
+
+    <ul>
+      {{#each links}}
+        <li>
+          <a href="{{url}}" rel="{{rel}}">{{name}}</a>
+        </li>
+      {{/each}}
+    </ul>
+  </div>
+</div>
