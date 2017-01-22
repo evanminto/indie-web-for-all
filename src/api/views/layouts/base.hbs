@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Indie Web for All</title>
+    <title>
+      {{#if pageTitle }}
+        {{pageTitle}}
+        -
+      {{/if}}
+      Indie Web for All
+    </title>
 
     {{#if metas}}
       {{#each metas}}
@@ -23,6 +29,10 @@
   </head>
 
   <body>
-    {{{body}}}
+    <h1>Indie Web for All</h1>
+
+    <main>
+      {{{body}}}
+    </main>
   </body>
 </html>

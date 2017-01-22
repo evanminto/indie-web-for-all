@@ -1,17 +1,27 @@
 <div class="h-feed">
   <div class="p-author h-card">
-    <h1 class="p-name">
+    <h2 class="p-name">
       <a
         class="u-url"
         rel="me"
         href="/{{profile.username}}"
       >{{profile.username}}</a>
-    </h1>
+    </h2>
 
     <ul>
-      {{#each links}}
+      {{#each profileLinks}}
         <li>
           <a href="{{url}}" rel="{{rel}}">{{name}}</a>
+        </li>
+      {{/each}}
+    </ul>
+
+    <ul>
+      {{#each activities}}
+        <li>
+          {{#if note}}
+            {{> note profile=../profile}}
+          {{/if}}
         </li>
       {{/each}}
     </ul>

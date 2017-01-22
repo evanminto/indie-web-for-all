@@ -3,8 +3,7 @@ import accepts from 'accepts';
 import activityStreamsPublisher from '../../modules/publishers/activityStreams';
 import config from '../../../../config/server';
 import db from '../../db';
-import baseSyncTemplate from '../../../web/templates/baseSync.hbs';
-import profileTemplate from '../../../web/templates/profile.hbs';
+import outboxFactory from '../../../api/modules/outboxFactory';
 import { ACTIVITY_JSON, ACTIVITY_STREAMS, HTML } from '../../modules/mimeTypes';
 
 /**
@@ -31,7 +30,9 @@ export async function getProfile(request, response, next) {
     next('route');
   }
 
+  let activities;
   let links;
+  let outbox;
 
   switch (accepts(request).type([
     HTML,
@@ -45,12 +46,14 @@ export async function getProfile(request, response, next) {
     case HTML:
     default:
       try {
+        outbox = await outboxFactory.createForProfile(profile);
         links = await profile.getLinks();
+        activities = await outbox.getActivities();
       } catch (error) {
         // Do nothing.
       }
 
-      return respondHTML(response, profile, links);
+      return respondHTML(response, profile, links, activities);
   }
 }
 
@@ -60,8 +63,28 @@ function respondAS(response, profile) {
   );
 }
 
-function respondHTML(response, profile, links) {
-  const html = baseSyncTemplate({
+async function respondHTML(response, profile, links, activities) {
+  let publishedActivities = [];
+
+  try {
+    publishedActivities = await Promise.all(activities.map(async (activity) => {
+      const object = await activity.getObject();
+
+      if (object.type === 'Note') {
+        const note = await object.getNote();
+
+        return {
+          note,
+        };
+      }
+    }));
+  } catch (error) {
+    // Do nothing.
+  }
+
+  response.render('profile', {
+    profile,
+    activities: publishedActivities,
     links: [
       {
         rel: 'authorization_endpoint',
@@ -76,16 +99,8 @@ function respondHTML(response, profile, links) {
         href: `${config.baseUrl}/${profile.username}/micropub`,
       },
     ],
-
-    body: profileTemplate({
-      profile,
-      links,
-    }),
+    profileLinks: links,
   });
-
-  response
-    .set('Content-Type', HTML)
-    .send(html);
 }
 
 /**

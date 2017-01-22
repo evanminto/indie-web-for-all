@@ -1,9 +1,6 @@
 import accepts from 'accepts';
-import moment from 'moment';
 
 import db from '../../../api/db';
-import baseSyncTemplate from '../../../web/templates/baseSync.hbs';
-import noteTemplate from '../../../web/templates/note.hbs';
 import NotFoundError from '../../../api/modules/errors/NotFoundError';
 import { ACTIVITY_JSON, ACTIVITY_STREAMS, HTML } from '../../modules/mimeTypes';
 
@@ -69,18 +66,10 @@ function respondAS(response, profile, note) {
  * @private
  */
 function respondHTML(response, profile, note) {
-  const html = baseSyncTemplate({
-    body: noteTemplate({
-      note,
-      profile,
-      noteCreatedHuman: moment(note.created).format('M/D/YY h:mm A'),
-      noteCreatedMachine: moment(note.created).format(),
-    }),
+  response.render('note', {
+    note,
+    profile,
   });
-
-  response
-    .set('Content-Type', HTML)
-    .send(html);
 }
 
 /**

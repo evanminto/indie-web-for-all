@@ -3,10 +3,6 @@ import express from 'express';
 const mockTemplate = jest.fn();
 mockTemplate.mockImplementation(() => '');
 
-jest.mock('../src/web/templates/baseSync.hbs', () => mockTemplate);
-jest.mock('../src/web/templates/note.hbs', () => mockTemplate);
-jest.mock('../src/web/templates/profile.hbs', () => mockTemplate);
-
 const api = require('../src/api').default;
 const config = require('../config/server');
 const db = require('../src/api/db').default;

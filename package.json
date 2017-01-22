@@ -48,6 +48,7 @@
     "document-ready-promise": "^3.0.1",
     "envify": "^3.4.1",
     "express": "^4.14.0",
+    "express-handlebars": "^3.0.0",
     "form-data": "^2.1.2",
     "handlebarsify": "^1.1.0",
     "http-status-codes": "^1.0.6",
