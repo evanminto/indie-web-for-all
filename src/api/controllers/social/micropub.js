@@ -18,7 +18,7 @@ const micropubConfig = {
 
     return {
       me: meUrl,
-      endpoint: config.micropub.authorizationEndpoint,
+      endpoint: config.micropub.tokenEndpoint,
     };
   },
 
@@ -48,7 +48,9 @@ const micropubConfig = {
         }
       }
     } catch (error) {
-      console.log(error);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(error);
+      }
 
       return false;
     }
