@@ -48,9 +48,7 @@ const micropubConfig = {
         }
       }
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log(error);
-      }
+      console.log(error);
 
       return false;
     }
