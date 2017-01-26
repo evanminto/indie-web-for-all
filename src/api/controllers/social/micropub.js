@@ -18,7 +18,7 @@ const micropubConfig = {
 
     return {
       me: meUrl,
-      endpoint: config.micropub.tokenEndpoint,
+      endpoint: config.micropub.authorizationEndpoint,
     };
   },
 

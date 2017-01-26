@@ -1,7 +1,7 @@
 {
   "baseUrl": "http://localhost:3000",
   "micropub": {
-    "authorizationEndpoint": "",
-    "tokenEndpoint": "http://localhost:3000/token_dev"
+    "authorizationEndpoint": "http://localhost:3000/token_dev",
+    "tokenEndpoint": ""
   }
 }
