@@ -2,6 +2,6 @@
   "baseUrl": "https://indie-web-for-all.herokuapp.com",
   "micropub": {
     "authorizationEndpoint": "https://indieauth.com/auth",
-    "tokenEndpoint": "https://tokens.indieauth.com/token"
+    "tokenEndpoint": "https://indieauth-token-endpoint.herokuapp.com/token"
   }
 }
